@@ -1,0 +1,309 @@
+#Step5:Calculate an IVIVC Model: Model Dependent or Independent Method  --> Model Dependent Method -->Wagner-Nelson method
+library(reshape)
+library(sciplot)
+
+WagNel<-function(InVVTestindex,
+                 InVVRefindex, 
+                 keindex,
+                 separateWindows=TRUE)
+
+#calculate AUC(0~t) and AUC(0~INF)
+
+{
+
+   #split dataframe into sub-dataframe
+   W.data<-data.frame(pH=InVVTestindex$pH,formulation=InVVTestindex$formulation,subject=InVVTestindex$subject, time=InVVTestindex$time, conc.obs=InVVTestindex$conc.obs, FRD=InVVTestindex$FRD)
+   W.data
+   W.split<-split(W.data, list(W.data$pH ,W.data$formulation, W.data$subject) )
+
+cat("Enter Dose value of extended release forms\n")
+Dose <- scan(nlines=1,quiet=TRUE)
+cat("\nEnter PK parameter data file name\n")
+kename<-readline()
+kename<-paste(kename,".RData",sep="")
+load(kename)
+    
+   AB<-NULL
+   RD<-NULL
+   pH<-NULL
+   time<-NULL
+   formu<-NULL         
+      #calculate AUC, F(t) and Fab
+      for (j in 1:length(W.split)){
+           #if subject of W.split==subject of kepar, then use ke of kepar to claculate AUC(0~INF)
+           for(x in 1: length(unique( keindex$subject))){
+              if (W.split[[j]][["subject"]][1]==keindex$subject[[x]]){
+                  ke<- keindex$ke[[x]]
+                 }
+               } 
+             auc <- 0
+             Ft<-0
+             Fab<-0
+             for(i in 2:length(W.split[[j]][["time"]])){
+             #calculate AUC and exclude AUC==NA (auc<-0)
+             auc[i]<-(W.split[[j]][["time"]][i]-W.split[[j]][["time"]][i-1])*(W.split[[j]][["conc.obs"]][i]+W.split[[j]][["conc.obs"]][i-1])* 0.5
+             auc[i]<-auc[i]+auc[i-1]  
+             #calculate F(t): dose of absorption
+             Ft[i]<-W.split[[j]][["conc.obs"]][i]+ke*auc[i]
+              }
+              #calculate AUC (0~INF)
+               auc.infinity<-W.split[[j]][["conc.obs"]][length(W.split[[j]][["conc.obs"]])]/ke
+               aucINF<-auc[length(W.split[[j]][["conc.obs"]])]+auc.infinity         
+                #calculate Fab(t): absorption fraction rate
+                Fab<-0
+                for(i in 2:length(W.split[[j]][["time"]])){
+                Fab[i]<-(Ft[i]/(ke*aucINF))*100   
+                  }
+cat("****************************************************************************\n")
+cat("* Next:                                                                    *\n")
+cat("*      calculate AUCobs(0~t), AUCobs(0~inf), Fobs(t), FABobs               *\n")
+cat("*--------------------------------------------------------------------------*\n")
+cat("* AUCobs(0~t): area under the observed plasma concentration time curve     *\n")
+cat("*              (time = 0 to t)                                             *\n")
+cat("* AUCobs(0~inf): area under the observed plasma concentration time curve   *\n")
+cat("*               (time = 0 to infinity)                                     *\n")
+cat("* Fobs(t): observed absorption rate                                        *\n")
+cat("* FABobs: observed cumulative absorption fraction(%)                       *\n")
+cat("* FRD: cumulative released fraction(%)                                     *\n")
+cat("****************************************************************************\n")
+cat("\n\n")                  
+                  #Output
+                  cat("<< Output >>\n")
+                  output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subject"]],W.split[[j]][["formulation"]],W.split[[j]][["time"]],W.split[[j]][["conc.obs"]],auc, Ft, Fab,W.split[[j]][["FRD"]])
+                  colnames(output)<-list("pH","subject","formula.","time","conc.obs","AUCobs(0~t)", "Fobs(t)", "FABobs","FRD")
+                  show(output)
+                 cat("\n<<AUCobs(0~inf) is computed with trapezoidal method>>\n\n")
+                  show (aucINF)
+                  cat("\n\n")
+                  AB[[j]]<-c(Fab)
+                  RD[[j]]<-c(W.split[[j]][["FRD"]])                                        
+                  time[[j]]<-c(W.split[[j]][["time"]])
+                  pH[[j]]<-c(W.split[[j]][["pH"]])
+                  formu[[j]]<-c(as.character(W.split[[j]][["formulation"]])) 
+                   }               
+#use "melt" function of reshape package to melt lists (Fab and FRD, respectively) from 2*3*3 dataframe
+YY<-melt(AB)
+XX<-melt(RD)
+ZZ<-melt(time)
+AA<-melt(pH)
+BB<-melt(formu)
+Y<-YY$value
+X<-XX$value
+vivo<-data.frame(pH=AA$value, formula.=BB$value, time=ZZ$value, FAB=YY$value, FRD=XX$value)
+
+cat("****************************************************************************\n")
+cat("* Step4: Develop an IVIVC Model: Model Dependent Method                    *\n")
+cat("****************************************************************************\n")
+cat("\n")
+cat("<<Output:IVIVC model (linear regression)>>\n")
+
+#calculate linear regression
+show(lm(Y~X))
+show(anova(wnlm<-lm( Y~X)))
+print(summary(wnlm<-lm( Y~X)))
+Intercept<-coef(lm(Y~X))[1]
+Slope<-coef(lm(Y~X))[2]
+summary(wnlm<-lm( Y~X))$r.sq
+#plot in vitro-in vivo correlation plot
+iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
+I.split<-split(iviv, list(iviv$formula.)) 
+  if (separateWindows) {
+       get(getOption("device"))()
+          }
+  #為了自動產生顏色
+   x<-NULL
+   for(i in 1:length(I.split)){
+    x[i]<-i
+         }
+z <- lm(FAB~FRD, data=iviv)
+plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Fraction of Released (%)",ylab="Fraction of Absorption (%)",
+     col=x, bty="l", las=1, font.lab=2,cex.axis=1,cex.main=1)
+mtext("In-vitro-in-vivo-correlation Model",side=3,cex=2)  #mtext:可將文字加在圖的四周,cex為字的大小   
+#text:在圖形上展現R-squared and formula 
+text(10,80,paste("R-squared=",formatC(summary(wnlm<-lm( Y~X))$r.sq)) ) #catch R-squared value 
+text(10,75,paste("Y=",formatC(coef(lm( iviv$FAB~iviv$FRD))[1])) )
+text(25,75,paste("+",formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X") )
+abline(z)  # equivalent to abline(reg = z) or 
+abline(coef = coef(z))
+
+
+ #split dataframe into sub-dataframe
+W.data<-data.frame(pH=InVVTestindex$pH,formulation=InVVTestindex$formulation,subject=InVVTestindex$subject, time=InVVTestindex$time, conc.obs=InVVTestindex$conc.obs, FRD=InVVTestindex$FRD)
+W.data
+W.split<-split(W.data, list(W.data$pH ,W.data$formulation, W.data$subject) )
+
+   #calculate predicted Fab
+     pH<-0
+     formulation<-0
+     PredCmax<-0
+     ObsCmax<-0
+     PEC<-0
+     PEA<-0
+     PredCp<-NULL
+     formu<-NULL
+     time<-NULL
+      for (j in 1:length(W.split)){
+           auc<-0
+           PFab<-0
+           PCp<-0
+           PCmax<-0
+           Cmax<-0
+           PECmax <-0
+           PEAUC<-0
+         for(x in 1: length(unique( keindex$subject))){
+              if (W.split[[j]][["subject"]][1]==keindex$subject[[x]]){
+                  ke<- keindex$ke[[x]]
+                 }
+              if (W.split[[j]][["subject"]][1]==keindex$subject[[x]]){
+                  Vd<- keindex$Vd[[x]]
+               }
+              }
+          for(i in 2:length(W.split[[j]][["FRD"]])){
+             PFab[i]<-(W.split[[j]][["FRD"]][i])*Slope+ Intercept
+             }
+
+            for(i in 2:length(W.split[[j]][["time"]])){
+              #calculate predicted concentration
+              PCp[i]<-((PCp[i-1]*(2-((W.split[[j]][["time"]][i]-W.split[[j]][["time"]][i-1])*ke))+(2*(PFab[i]-PFab[i-1])*1/100*Dose/Vd))/(2+(ke*(W.split[[j]][["time"]][i]-W.split[[j]][["time"]][i-1]))))
+              #pick up predicted Cmax and observed Cmax
+              PCmax<-max(PCp, na.rm = FALSE)
+              Cmax<-max(W.split[[j]][["conc.obs"]], na.rm = FALSE)
+              #calculate absolute prediction error of Cmax
+              PECmax<-(abs(Cmax-PCmax))/Cmax
+              }
+              Pauc<-0
+
+             for(i in 2:length(W.split[[j]][["time"]])){
+             #calculate AUC and exclude AUC==NA (auc<-0)
+             auc[i]<-(W.split[[j]][["time"]][i]-W.split[[j]][["time"]][i-1])*(W.split[[j]][["conc.obs"]][i]+W.split[[j]][["conc.obs"]][i-1])* 0.5
+             auc[i]<-auc[i]+auc[i-1]
+              }
+              #calculate AUC (0~INF)
+               auc.infinity<-W.split[[j]][["conc.obs"]][length(W.split[[j]][["conc.obs"]])]/ke
+               aucINF<-auc[length(W.split[[j]][["conc.obs"]])]+auc.infinity
+
+             for(i in 2:length(W.split[[j]][["time"]])){
+               #calculate AUC and exclude AUC==NA (auc<-0)
+               Pauc[i]<-(W.split[[j]][["time"]][i]-W.split[[j]][["time"]][i-1])*(PCp[i]+PCp[i-1])* 0.5
+               Pauc[i]<-Pauc[i]+Pauc[i-1]
+              }
+                #calculate Predicted AUC (0~INF)
+                Pauc.infinity<-PCp[length(W.split[[j]][["conc.obs"]])]/ke
+                PaucINF<-Pauc[length(W.split[[j]][["conc.obs"]])]+Pauc.infinity
+                  #calculate absolute prediction error of AUC
+                 PEAUC<-(abs(aucINF-PaucINF))/aucINF
+
+                pH[j]<-W.split[[j]][["pH"]][1]
+                formulation[j]<-W.split[[j]][["formulation"]][1]
+                PredCmax[j]<-PCmax
+                ObsCmax[j]<-Cmax
+                PEC[j]<-PECmax
+                PEA[j]<-PEAUC
+
+cat("\n")
+cat("****************************************************************************\n")
+cat("* Next:                                                                    *\n")
+cat("*      calculate AUCpred(0~t), AUCpred(0~inf), conc.pred, FABpred(%)       *\n")
+cat("*--------------------------------------------------------------------------*\n")
+cat("* AUCpred(0~t): area under the predicted plasma concentration time curve   *\n")
+cat("*              (time = 0 to t)                                             *\n")
+cat("* AUCpred(0~inf): area under the predicted plasma concentration time curve *\n")
+cat("*                (time = 0 to infinity)                                    *\n")
+cat("* conc.pred: predicted plasma concentration                                *\n")
+cat("* FABpred: predicted cumulative absorption fraction(%)                     *\n")
+cat("****************************************************************************\n")
+cat("\n")    
+             #Output
+                  cat("<< Predicted Output >>\n")
+                  output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subject"]],W.split[[j]][["formulation"]],W.split[[j]][["time"]], PFab, PCp, Pauc )
+                  colnames(output)<-list("pH","subject","formula.","time","FABpred", "conc.pred", "AUCpred")
+                  show(output)
+                   cat("\n<<AUCpred(0~inf) is computed with trapezoidal method>>\n\n")
+                  show(PaucINF)
+                  cat("\n\n")
+                  PredCp[[j]]<-c(PCp)                                        
+                  time[[j]]<-c(W.split[[j]][["time"]])
+                  formu[[j]]<-c(as.character(W.split[[j]][["formulation"]])) 
+                }
+#for plot predicted Cp
+CC<-melt(PredCp)
+DD<-melt(time)
+EE<-melt(formu)
+Predvivo<-data.frame(conc.pred=CC$value, formula.=EE$value, time=DD$value)
+cat("****************************************************************************\n")
+cat("* Step5: Evaluate an IVIVC model: Prediction Error                         *\n")
+cat("*--------------------------------------------------------------------------*\n")
+cat("* PECmax: average absolute prediction error of Cmax (%)                    *\n")
+cat("* PEAUC: average absolute prediction error of AUC (%)                      *\n")
+cat("****************************************************************************\n")
+cat("\n")
+cat("<<Summary: Validation report>>\n")
+Y<-data.frame(pH=pH, formulation=formulation, PECmax=PEC*100, PEAUC=PEA*100)
+Y
+show(aggregate(Y, by=list(pH=Y$pH,formula.=Y$formulation), mean)  )
+
+cat("\n")
+cat("****************************************************************************\n")
+cat("*<<Plots >>                                                                *\n")
+cat("* Fitting Plots                                                            *\n")
+cat("* In-vitro-in-vivo-correlation Model (linear regression)                   *\n")
+cat("* Fraction of in vitro Released(%) vs. time                                *\n")
+cat("* Observed plasma concentration vs. time                                   *\n")
+cat("* Fraction of Absorption(%) vs. time                                       *\n")
+cat("* Predicted plasma concentration vs. time                                  *\n")
+cat("****************************************************************************\n")
+cat("\n")
+##plot "In vitro Dissolution : Fraction of Released(%) vs. time" 
+    plotting.vitro(InVVTestindex)
+##plot "In vivo plasma concentration (Observed): Plasma conc.vs. time"
+    plotting.cp(InVVTestindex)
+##plot "In vivo Absorption : Fraction of Absorption(%) vs. time"  
+      y<-aggregate(vivo, by=list(pH=vivo$pH,formula.=vivo$formula.,time=vivo$time ), mean)
+      s<-data.frame(pH=y[1],formula.=y[2],time=y[3],meanFAB=y[7])
+      S.data<-data.frame(pH=s$pH,formula.=s$formula.,time=s$time, meanFAB=s$FAB)
+      S.split<-split(S.data, list(S.data$pH,S.data$formula.)) 
+      F.split<-split(S.data, list(S.data$formula.)) 
+      A.split<-split(S.split, list(S.data$pH) ) 
+       #F.split[1]-->抓出 formulation=L
+       #F.split[[1]][["formula."]][1] -->抓出 formulation=L的第一行 
+       #A.split[1]-->抓出pH=1.2 
+       #A.split[[1]][[1]]--> 抓出pH=1.2 & formulation=L 
+       #A.split[[1]][[1]]$pH-->  抓出pH=1.2 & formulation=L 中的pH值 
+
+ for(i in 1:length(A.split)){ 
+       if (separateWindows) {
+       get(getOption("device"))()
+          }       
+        par(mfrow=c(2,2))  
+      for( j in seq_along(F.split)){ 
+         main<-paste(c("In vivo Absorption pH=", A.split[[i]][[i]]$pH[1], "formulation=",as.character(F.split[[j]][["formula."]][1]) ),collapse=" ")
+         # plot points
+         plot(A.split[[i]][[j]]$time,A.split[[i]][[j]]$meanFAB,type="punkte",main=main,
+         xlab="Time", ylab="Fraction of Absorption (%)",pch=15,col=j,bty="l",las=1,
+         font.lab=2,cex.lab=1,cex.axis=1,cex.main=1)
+         #plot line
+         lines(A.split[[i]][[j]]$time, A.split[[i]][[j]]$meanFAB, col=j) 
+   }
+ }  
+##plot "In vivo Absorption : Fraction of Absorption(%) vs. time"
+ Predvivo<-data.frame(conc.pred=CC$value, formula.=EE$value, time=DD$value)
+ P.split<-split(Predvivo, list(Predvivo$formula.)) 
+  if (separateWindows) {
+       get(getOption("device"))()
+          }
+  #為了自動產生顏色
+   x<-NULL
+   for(i in 1:length(P.split)){
+    x[i]<-i
+         }
+            lineplot.CI(Predvivo$time, Predvivo$conc.pred, group = Predvivo$formula., cex = 1,
+            xlab = "Time", ylab = "Plasma conc.",cex.lab = 1, x.leg = 12, col=x,bty="l", 
+            font.lab=2,cex.axis=1,cex.main=1,las=1,
+             )
+            axis(1,at=0:50,tcl=-.5, labels=FALSE) 
+            mtext("Predicted plasma concentration ",side=3,cex=2)  #要放在plot之後
+cat("\n")
+bye()
+}   
+    
+
