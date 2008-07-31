@@ -13,6 +13,10 @@ options(warn=-1)
     stop("Package odesolve not found.")
   }
  
+  if (noquote(unlist(format(.Platform)))[1] == "unix") {
+        windows <<- function(record) {
+        }
+     }   
   cat("\n")
   file.menu <- c("Start a new project",
                  "Demo (Wagner-Nelson method)", 

@@ -215,7 +215,8 @@ cat("<<Summary: IVIVC model>>\n")
 cat("\nY=", coef(lm(Y~X))[1],"+",coef(lm(Y~X))[2],"X\n\n")
 
 #plot in vitro-in vivo correlation plot
-get(getOption("device"))() #跳出新視窗 
+windows(record = TRUE)
+
 iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
 z <- lm(FAB~FRD, data=iviv)
 plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Fraction of Released (%)",ylab="Fraction of Absorption (%)",
@@ -293,7 +294,9 @@ cat("***************************************************************************
 cat("\n")
 cat("<<Summary: Validation report>>\n")
 Y<-data.frame(pH=7.4, formulation=1, PECmax=PECmax*100, PEAUC=PEAUC*100)
-show(aggregate(Y, by=list(pH=Y$pH,formula.=Y$formulation), mean)  )
+XX<-(aggregate(Y, by=list(pH=Y$pH,formula.=Y$formulation), mean)) 
+ZZ<-data.frame(pH=XX[1], formula.=XX[2],PECmax=XX[5], PEAUC=XX[6])
+show(ZZ)  
 cat("\n")
 cat("****************************************************************************\n")
 cat("*<<Plots >>                                                                *\n")
@@ -306,7 +309,7 @@ cat("* Predicted plasma concentration vs. time                                  
 cat("****************************************************************************\n")
 cat("\n")
 #plot in vitro
-get(getOption("device"))()
+
 main<-paste(c("In Vitro Dissolution pH=7.4","formulation=1"),collapse=" ")
   # plot points
   plot(InVVTestindex$time,InVVTestindex$FRD,type="punkte",main=main,
@@ -317,7 +320,7 @@ main<-paste(c("In Vitro Dissolution pH=7.4","formulation=1"),collapse=" ")
 
 
 #plot in vivo
-get(getOption("device"))()
+
 main<-paste(c("In vivo Absorption pH=7.4","formulation=1"),collapse=" ")
          # plot points
          plot(InVVTestindex$time,Fab,type="punkte",main=main,
@@ -327,7 +330,7 @@ main<-paste(c("In vivo Absorption pH=7.4","formulation=1"),collapse=" ")
          lines(InVVTestindex$time, Fab, col="firebrick3",lwd="2",) 
 
 #plot plasma conc (predicted)
-get(getOption("device"))()
+
       lineplot.CI(Predvivo$time, Predvivo$conc.pred, group = Predvivo$formula., cex = 1,
             xlab = "Time (hr)", ylab = "Plasma conc. (mg/L)",cex.lab = 1, x.leg = 12,bty="l", 
             font.lab=2,cex.axis=1,cex.main=1,las=1, pch=15, col="firebrick3",lwd="2"
@@ -336,14 +339,13 @@ get(getOption("device"))()
            mtext("Predicted plasma concentration ",side=3,cex=2)  #要放在plot之後
 
 #plot plasma conc (observed)
-get(getOption("device"))()
+
       lineplot.CI(InVVTestindex$time, InVVTestindex$conc.obs, group = InVVTestindex$formula., cex = 1, 
             xlab = "Time (hr)", ylab = "Plasma conc. (mg/L)",cex.lab = 1, x.leg = 12, bty="l", 
             font.lab=2,cex.axis=1,cex.main=1,las=1, pch=15, col="firebrick3",lwd="2"
              )
             axis(1,at=0:50,tcl=-.5, labels=FALSE) 
-            mtext("Observed plasma concentration ",side=3,cex=2)  #要放在plot之後
-            
+            mtext("Observed plasma concentration ",side=3,cex=2)  #要放在plot之後            
 
 run()
 }

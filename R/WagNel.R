@@ -12,9 +12,10 @@ WagNel<-function(InVVTestindex,
 {
 
    #split dataframe into sub-dataframe
-   W.data<-data.frame(pH=InVVTestindex$pH,formulation=InVVTestindex$formulation,subject=InVVTestindex$subject, time=InVVTestindex$time, conc.obs=InVVTestindex$conc.obs, FRD=InVVTestindex$FRD)
+   W.data<-data.frame(pH=InVVTestindex$pH,formula.=InVVTestindex$formula.,subj=InVVTestindex$subj, 
+                      time=InVVTestindex$time,conc.obs=InVVTestindex$conc.obs, FRD=InVVTestindex$FRD)
    W.data
-   W.split<-split(W.data, list(W.data$pH ,W.data$formulation, W.data$subject) )
+   W.split<-split(W.data, list(W.data$pH ,W.data$formula., W.data$subj) )
 
 cat("Enter Dose value of extended release forms\n")
 Dose <- scan(nlines=1,quiet=TRUE)
@@ -31,8 +32,8 @@ load(kename)
       #calculate AUC, F(t) and Fab
       for (j in 1:length(W.split)){
            #if subject of W.split==subject of kepar, then use ke of kepar to claculate AUC(0~INF)
-           for(x in 1: length(unique( keindex$subject))){
-              if (W.split[[j]][["subject"]][1]==keindex$subject[[x]]){
+           for(x in 1: length(unique( keindex$subj))){
+              if (W.split[[j]][["subj"]][1]==keindex$subj[[x]]){
                   ke<- keindex$ke[[x]]
                  }
                } 
@@ -69,17 +70,17 @@ cat("***************************************************************************
 cat("\n\n")                  
                   #Output
                   cat("<< Output >>\n")
-                  output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subject"]],W.split[[j]][["formulation"]],W.split[[j]][["time"]],W.split[[j]][["conc.obs"]],auc, Ft, Fab,W.split[[j]][["FRD"]])
-                  colnames(output)<-list("pH","subject","formula.","time","conc.obs","AUCobs(0~t)", "Fobs(t)", "FABobs","FRD")
+                  output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subj"]],W.split[[j]][["formula."]],W.split[[j]][["time"]],W.split[[j]][["conc.obs"]],auc, Ft, Fab,W.split[[j]][["FRD"]])
+                  colnames(output)<-list("pH","subj","formula.","time","conc.obs","AUCobs(0~t)", "Fobs(t)", "FABobs","FRD")
                   show(output)
-                 cat("\n<<AUCobs(0~inf) is computed with trapezoidal method>>\n\n")
+                  cat("\n<<AUCobs(0~inf) is computed with trapezoidal method>>\n\n")
                   show (aucINF)
                   cat("\n\n")
                   AB[[j]]<-c(Fab)
                   RD[[j]]<-c(W.split[[j]][["FRD"]])                                        
                   time[[j]]<-c(W.split[[j]][["time"]])
                   pH[[j]]<-c(W.split[[j]][["pH"]])
-                  formu[[j]]<-c(as.character(W.split[[j]][["formulation"]])) 
+                  formu[[j]]<-c(as.character(W.split[[j]][["formula."]])) 
                    }               
 #use "melt" function of reshape package to melt lists (Fab and FRD, respectively) from 2*3*3 dataframe
 YY<-melt(AB)
@@ -107,9 +108,9 @@ summary(wnlm<-lm( Y~X))$r.sq
 #plot in vitro-in vivo correlation plot
 iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
 I.split<-split(iviv, list(iviv$formula.)) 
-  if (separateWindows) {
-       get(getOption("device"))()
-          }
+
+windows(record = TRUE )
+  
   #為了自動產生顏色
    x<-NULL
    for(i in 1:length(I.split)){
@@ -128,13 +129,13 @@ abline(coef = coef(z))
 
 
  #split dataframe into sub-dataframe
-W.data<-data.frame(pH=InVVTestindex$pH,formulation=InVVTestindex$formulation,subject=InVVTestindex$subject, time=InVVTestindex$time, conc.obs=InVVTestindex$conc.obs, FRD=InVVTestindex$FRD)
+W.data<-data.frame(pH=InVVTestindex$pH,formula.=InVVTestindex$formula.,subj=InVVTestindex$subj, time=InVVTestindex$time, conc.obs=InVVTestindex$conc.obs, FRD=InVVTestindex$FRD)
 W.data
-W.split<-split(W.data, list(W.data$pH ,W.data$formulation, W.data$subject) )
+W.split<-split(W.data, list(W.data$pH ,W.data$formula., W.data$subj) )
 
    #calculate predicted Fab
      pH<-0
-     formulation<-0
+     formula.<-0
      PredCmax<-0
      ObsCmax<-0
      PEC<-0
@@ -150,11 +151,11 @@ W.split<-split(W.data, list(W.data$pH ,W.data$formulation, W.data$subject) )
            Cmax<-0
            PECmax <-0
            PEAUC<-0
-         for(x in 1: length(unique( keindex$subject))){
-              if (W.split[[j]][["subject"]][1]==keindex$subject[[x]]){
+         for(x in 1: length(unique( keindex$subj))){
+              if (W.split[[j]][["subj"]][1]==keindex$subj[[x]]){
                   ke<- keindex$ke[[x]]
                  }
-              if (W.split[[j]][["subject"]][1]==keindex$subject[[x]]){
+              if (W.split[[j]][["subj"]][1]==keindex$subj[[x]]){
                   Vd<- keindex$Vd[[x]]
                }
               }
@@ -194,7 +195,7 @@ W.split<-split(W.data, list(W.data$pH ,W.data$formulation, W.data$subject) )
                  PEAUC<-(abs(aucINF-PaucINF))/aucINF
 
                 pH[j]<-W.split[[j]][["pH"]][1]
-                formulation[j]<-W.split[[j]][["formulation"]][1]
+                formula.[j]<-W.split[[j]][["formula."]][1]
                 PredCmax[j]<-PCmax
                 ObsCmax[j]<-Cmax
                 PEC[j]<-PECmax
@@ -215,15 +216,15 @@ cat("***************************************************************************
 cat("\n")    
              #Output
                   cat("<< Predicted Output >>\n")
-                  output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subject"]],W.split[[j]][["formulation"]],W.split[[j]][["time"]], PFab, PCp, Pauc )
-                  colnames(output)<-list("pH","subject","formula.","time","FABpred", "conc.pred", "AUCpred")
+                  output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subj"]],W.split[[j]][["formula."]],W.split[[j]][["time"]], PFab, PCp, Pauc )
+                  colnames(output)<-list("pH","subj","formula.","time","FABpred", "conc.pred", "AUCpred")
                   show(output)
                    cat("\n<<AUCpred(0~inf) is computed with trapezoidal method>>\n\n")
                   show(PaucINF)
                   cat("\n\n")
                   PredCp[[j]]<-c(PCp)                                        
                   time[[j]]<-c(W.split[[j]][["time"]])
-                  formu[[j]]<-c(as.character(W.split[[j]][["formulation"]])) 
+                  formu[[j]]<-c(as.character(W.split[[j]][["formula."]])) 
                 }
 #for plot predicted Cp
 CC<-melt(PredCp)
@@ -238,10 +239,11 @@ cat("* PEAUC: average absolute prediction error of AUC (%)                      
 cat("****************************************************************************\n")
 cat("\n")
 cat("<<Summary: Validation report>>\n")
-Y<-data.frame(pH=pH, formulation=formulation, PECmax=PEC*100, PEAUC=PEA*100)
+Y<-data.frame(pH=pH, formula.=formula., PECmax=PEC*100, PEAUC=PEA*100)
 Y
-show(aggregate(Y, by=list(pH=Y$pH,formula.=Y$formulation), mean)  )
-
+XX<-(aggregate(Y, by=list(pH=Y$pH,formula.=Y$formula.), mean)  ) 
+ZZ<-data.frame(pH=XX[1], formula.=XX[2],PECmax=XX[5], PEAUC=XX[6])
+show(ZZ)  
 cat("\n")
 cat("****************************************************************************\n")
 cat("*<<Plots >>                                                                *\n")
@@ -253,8 +255,7 @@ cat("* Fraction of Absorption(%) vs. time                                       
 cat("* Predicted plasma concentration vs. time                                  *\n")
 cat("****************************************************************************\n")
 cat("\n")
-##plot "In vitro Dissolution : Fraction of Released(%) vs. time" 
-    plotting.vitro(InVVTestindex)
+
 ##plot "In vivo plasma concentration (Observed): Plasma conc.vs. time"
     plotting.cp(InVVTestindex)
 ##plot "In vivo Absorption : Fraction of Absorption(%) vs. time"  
@@ -269,14 +270,34 @@ cat("\n")
        #A.split[1]-->抓出pH=1.2 
        #A.split[[1]][[1]]--> 抓出pH=1.2 & formulation=L 
        #A.split[[1]][[1]]$pH-->  抓出pH=1.2 & formulation=L 中的pH值 
+##plot "In vivo Absorption : Fraction of Absorption(%) vs. time"
+ Predvivo<-data.frame(conc.pred=CC$value, formula.=EE$value, time=DD$value)
+ P.split<-split(Predvivo, list(Predvivo$formula.)) 
 
+  #為了自動產生顏色
+   x<-NULL
+   for(i in 1:length(P.split)){
+    x[i]<-i
+         }
+            lineplot.CI(Predvivo$time, Predvivo$conc.pred, group = Predvivo$formula., cex = 1,
+            xlab = "Time", ylab = "Plasma conc.",cex.lab = 1, x.leg = 12, col=x,bty="l", 
+            font.lab=2,cex.axis=1,cex.main=1,las=1,x.cont=TRUE,xaxt="n",err.width=0.05
+             )
+            axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+            axis(1,at=0:100,tcl=-.2, labels=FALSE) 
+            mtext("Predicted drug plasma concentration ",side=3,cex=2)  #要放在plot之後
+
+##plot "In vitro Dissolution : Fraction of Released(%) vs. time" 
+    plotting.vitro(InVVTestindex)
+    
+par(mfrow=c(2,2))
  for(i in 1:length(A.split)){ 
-       if (separateWindows) {
-       get(getOption("device"))()
-          }       
-        par(mfrow=c(2,2))  
+    #   if (separateWindows) {
+    #   get(getOption("device"))()
+    #      }       
+    #    par(mfrow=c(2,2))  
       for( j in seq_along(F.split)){ 
-         main<-paste(c("In vivo Absorption pH=", A.split[[i]][[i]]$pH[1], "formulation=",as.character(F.split[[j]][["formula."]][1]) ),collapse=" ")
+         main<-paste(c("In vivo Absorption pH=", A.split[[i]][[i]]$pH[1],"formula.=",as.character(F.split[[j]][["formula."]][1]) ),collapse=" ")
          # plot points
          plot(A.split[[i]][[j]]$time,A.split[[i]][[j]]$meanFAB,type="punkte",main=main,
          xlab="Time", ylab="Fraction of Absorption (%)",pch=15,col=j,bty="l",las=1,
@@ -285,23 +306,6 @@ cat("\n")
          lines(A.split[[i]][[j]]$time, A.split[[i]][[j]]$meanFAB, col=j) 
    }
  }  
-##plot "In vivo Absorption : Fraction of Absorption(%) vs. time"
- Predvivo<-data.frame(conc.pred=CC$value, formula.=EE$value, time=DD$value)
- P.split<-split(Predvivo, list(Predvivo$formula.)) 
-  if (separateWindows) {
-       get(getOption("device"))()
-          }
-  #為了自動產生顏色
-   x<-NULL
-   for(i in 1:length(P.split)){
-    x[i]<-i
-         }
-            lineplot.CI(Predvivo$time, Predvivo$conc.pred, group = Predvivo$formula., cex = 1,
-            xlab = "Time", ylab = "Plasma conc.",cex.lab = 1, x.leg = 12, col=x,bty="l", 
-            font.lab=2,cex.axis=1,cex.main=1,las=1,
-             )
-            axis(1,at=0:50,tcl=-.5, labels=FALSE) 
-            mtext("Predicted plasma concentration ",side=3,cex=2)  #要放在plot之後
 cat("\n")
 bye()
 }   

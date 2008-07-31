@@ -4,11 +4,11 @@ plotting.lin <- function (InVVRefindex, fm, i, pick, coef, xaxis, yaxis,
 {               
   #options(warn=-1)
   
-  j<-1:length(InVVRefindex$time[InVVRefindex$subject==i])
-  x<-InVVRefindex$time[InVVRefindex$subject==i]
-  y<-InVVRefindex$concentration[InVVRefindex$subject==i]
+  j<-1:length(InVVRefindex$time[InVVRefindex$subj==i])
+  x<-InVVRefindex$time[InVVRefindex$subj==i]
+  y<-InVVRefindex$conc[InVVRefindex$subj==i]
         
- #Calculated concentration
+ #Calculated conc
   cal<-predict(fm,list(time=x))
     
  #Weighted residuals   
@@ -22,12 +22,12 @@ plotting.lin <- function (InVVRefindex, fm, i, pick, coef, xaxis, yaxis,
                ifelse(y[j]==0.0, 0, sqrt(1/((y[j])^2))*(y[j]-cal[j])))
   
  #calculate AUC and AUMC   
-  add<-function(time,concentration){
+  add<-function(time,conc){
      auc<-0 ; aumc<-0
      for(i in 2:length(time)) {
-     auc[i]<-1/2*(time[i]-time[i-1])*(concentration[i]+concentration[i-1])
+     auc[i]<-1/2*(time[i]-time[i-1])*(conc[i]+conc[i-1])
      auc[i]<-auc[i]+auc[i-1]
-     aumc[i]<-1/2*(time[i]-time[i-1])*(concentration[i]*time[i]+concentration[i-1]*time[i-1])
+     aumc[i]<-1/2*(time[i]-time[i-1])*(conc[i]*time[i]+conc[i-1]*time[i-1])
      aumc[i]<-aumc[i]+aumc[i-1]
      }
      return(list(auc=auc,aumc=aumc))

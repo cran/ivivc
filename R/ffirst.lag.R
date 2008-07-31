@@ -126,21 +126,21 @@ ffirst.lag<- function(InVVRefindex,
    Vm<-NULL
    Km<-NULL
    sub<-NULL
-   for( i in 1:length(unique(InVVRefindex$subject)))  {
+   for( i in 1:length(unique(InVVRefindex$subj)))  {
       cat("\n\n               << subject",i,">>\n\n" )
       sub[i]<-i  
       objfun <- function(par) {
         if (MMe) {
-           out <- modfun1(InVVRefindex$time[InVVRefindex$subject==i], par[1], par[2],par[3],par[4])
+           out <- modfun1(InVVRefindex$time[InVVRefindex$subj==i], par[1], par[2],par[3],par[4])
         } 
         else  {
-           out <- modfun(InVVRefindex$time[InVVRefindex$subject==i], par[1], par[2], par[3])
+           out <- modfun(InVVRefindex$time[InVVRefindex$subj==i], par[1], par[2], par[3])
         }
-     gift <- which( InVVRefindex$concentration[InVVRefindex$subject==i] != 0 )
+     gift <- which( InVVRefindex$conc[InVVRefindex$subj==i] != 0 )
      switch(pick,
-            sum((InVVRefindex$concentration[InVVRefindex$subject==i][gift]-out[gift])^2),
-            sum((InVVRefindex$concentration[InVVRefindex$subject==i][gift]-out[gift])^2/InVVRefindex$concentration[gift]),
-            sum(((InVVRefindex$concentration[InVVRefindex$subject==i][gift] - out[gift])/InVVRefindex$concentration[gift])^2))
+            sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2),
+            sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2/InVVRefindex$conc[gift]),
+            sum(((InVVRefindex$conc[InVVRefindex$subj==i][gift] - out[gift])/InVVRefindex$conc[gift])^2))
      }
 #The value of parameter obtained from genetic algorithm 
       if (MMe) {
@@ -193,7 +193,7 @@ ffirst.lag<- function(InVVRefindex,
  ##Residuals sum-of-squares and parameter values fitted by nls 
       cat("\n<< Residual sum-of-squares and parameter values fitted by nls >>\n\n")
       if (MMe) {
-        fm<-nls(concentration ~ modfun1(time, ka, Vm, Km, Vd), data=InVVRefindex,subset=subject==i,
+        fm<-nls(conc ~ modfun1(time, ka, Vm, Km, Vd), data=InVVRefindex,subset=subj==i,
             start=list(ka=opt$par[1],Vm=opt$par[2],Km=opt$par[3],Vd=opt$par[4]),trace=TRUE,
             nls.control(maxiter=500,tol=1.0))
         cat("\n")
@@ -201,7 +201,7 @@ ffirst.lag<- function(InVVRefindex,
       } 
       else {
         ## No MM elimination
-        fm <-nls(concentration ~ modfun(time, ka, kel, Vd), data=InVVRefindex,subset=subject==i,
+        fm <-nls(conc ~ modfun(time, ka, kel, Vd), data=InVVRefindex,subset=subj==i,
              start=list(ka=opt$par[1],kel=opt$par[2],Vd=opt$par[3]),trace=TRUE,
              nls.control(tol=1))
         cat("\n")
@@ -211,7 +211,7 @@ ffirst.lag<- function(InVVRefindex,
  }        
        if (MMe) {
           cat("<< Summary >>\n")
-          keindex<-data.frame(subject=sub,ka=ka,Vm=Vm,Km=Km, Vd=Vd)
+          keindex<-data.frame(subj=sub,ka=ka,Vm=Vm,Km=Km, Vd=Vd)
           show(keindex)
               cat("\nSave data (y/n) ?\n")
             ans<-readline()
@@ -262,7 +262,7 @@ ffirst.lag<- function(InVVRefindex,
     }   
        else {
           cat("<< Summary >>\n")
-          keindex<-data.frame(subject=sub,ka=ka, kel=ke,Vd=Vd)
+          keindex<-data.frame(subj=sub,ka=ka, kel=ke,Vd=Vd)
           show(keindex)   
             cat("\nSave data (y/n) ?\n")
             ans<-readline()

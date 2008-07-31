@@ -25,8 +25,9 @@ cat("***************************************************************************
 cat("\n")
      cat("Enter ke and Vd value from references\n") 
       ##Input Ke value from reference or from previous PKfit
-      keindex<-data.frame(subject=c(1), ke=c(0), Vd=c(0))
+      keindex<-data.frame(subj=c(1), ke=c(0), Vd=c(0))
       keindex<-edit(keindex)
+      keindex<- na.omit(keindex) 
        cat("\nSave data (y/n) ?\n")
             ans<-readline()
             cat("\n")

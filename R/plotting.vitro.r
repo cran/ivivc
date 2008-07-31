@@ -1,7 +1,7 @@
 #plot in vitro
 plotting.vitro<-function (InVVTestindex, separateWindows=TRUE  )
 {
-y<-aggregate(InVVTestindex, by=list(pH=InVVTestindex$pH,formula.=InVVTestindex$formulation,time=InVVTestindex$time ), mean)
+y<-aggregate(InVVTestindex, by=list(pH=InVVTestindex$pH,formula.=InVVTestindex$formula.,time=InVVTestindex$time ), mean)
 s<-data.frame(pH=y[1],formula.=y[2],time=y[3],meanFRD=y[9])
 S.data<-data.frame(pH=s$pH,formula.=s$formula.,time=s$time, meanFRD=s$FRD)
 S.data
@@ -14,12 +14,9 @@ A.split<-split(S.split, list(S.data$pH) )
 #A.split[1]-->抓出pH=1.2 
 #A.split[[1]][[1]]--> 抓出pH=1.2 & formulation=L 
 #A.split[[1]][[1]]$pH-->  抓出pH=1.2 & formulation=L 中的pH值 
-
+par(mfrow=c(2,2))
  for(i in 1:length(A.split)){ 
-       if (separateWindows) {
-       get(getOption("device"))()
-          }       
-        par(mfrow=c(2,2))  
+
       for( j in seq_along(F.split)){ 
          main<-paste(c("In Vitro Dissolution pH=", A.split[[i]][[i]]$pH[1], "formulation=",as.character(F.split[[j]][["formula."]][1]) ),collapse=" ")
          # plot points

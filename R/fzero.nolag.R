@@ -85,22 +85,22 @@ fzero.nolag <- function(InVVRefindex,
  Km<-NULL
  ke<-NULL 
  sub<-NULL
-   for( i in 1:length(unique(InVVRefindex$subject)))  {
+   for( i in 1:length(unique(InVVRefindex$subj)))  {
      cat("\n\n               << subject",i,">>\n\n" )  
      sub[i]<-i  
      objfun <- function(par) {
         if (MMe) {
-           out<-modfun1(InVVRefindex$time[InVVRefindex$subject==i],par[1],par[2],par[3],par[4])
+           out<-modfun1(InVVRefindex$time[InVVRefindex$subj==i],par[1],par[2],par[3],par[4])
         } 
         else {
            ## No MM elimination
-           out<-modfun(InVVRefindex$time[InVVRefindex$subject==i],par[1],par[2],par[3])
+           out<-modfun(InVVRefindex$time[InVVRefindex$subj==i],par[1],par[2],par[3])
         }
-      gift <- which( InVVRefindex$concentration[InVVRefindex$subject==i] != 0 )
+      gift <- which( InVVRefindex$conc[InVVRefindex$subj==i] != 0 )
       switch(pick,
-             sum((InVVRefindex$concentration[InVVRefindex$subject==i][gift]-out[gift])^2),
-             sum((InVVRefindex$concentration[InVVRefindex$subject==i][gift]-out[gift])^2/InVVRefindex$concentration[gift]),
-             sum(((InVVRefindex$concentration[InVVRefindex$subject==i][gift] - out[gift])/InVVRefindex$concentration[gift])^2))
+             sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2),
+             sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2/InVVRefindex$conc[gift]),
+             sum(((InVVRefindex$conc[InVVRefindex$subj==i][gift] - out[gift])/InVVRefindex$conc[gift])^2))
       }
  #The value of parameter obtained from genetic algorithm 
         if (MMe) {
@@ -156,7 +156,7 @@ fzero.nolag <- function(InVVRefindex,
     ##Residuals sum-of-squares and parameter values fitted by nls
      cat("\n<< Residual sum-of-squares and parameter values fitted by nls >>\n\n")
      if (MMe) {
-        fm<-nls(concentration~modfun1(time,Tabs,Vm,Km,Vd),data=InVVRefindex, algorithm="default",subset=subject==i,
+        fm<-nls(conc~modfun1(time,Tabs,Vm,Km,Vd),data=InVVRefindex, algorithm="default",subset=subj==i,
             start=list(Tabs=opt$par[1],Vm=opt$par[2],Km=opt$par[3],Vd=opt$par[4]),trace=TRUE,
             nls.control(maxiter=50,tol=10,minFactor=1/1024))
         cat("\n")
@@ -164,7 +164,7 @@ fzero.nolag <- function(InVVRefindex,
      } 
      else {
         ## No MM elimination
-        fm<-nls(concentration~modfun(time,Tabs,kel,Vd,1),data=InVVRefindex, algorithm="default",subset=subject==i,
+        fm<-nls(conc~modfun(time,Tabs,kel,Vd,1),data=InVVRefindex, algorithm="default",subset=subj==i,
             start=list(Tabs=opt$par[1],kel=opt$par[2],Vd=opt$par[3]),trace=TRUE,
             nls.control(tol=1))
         cat("\n")
@@ -174,7 +174,7 @@ fzero.nolag <- function(InVVRefindex,
   }
    if (MMe) {
           cat("<< Summary >>\n")
-          keindex<-data.frame(subject=sub,Vm=Vm,Km=Km, Vd=Vd)
+          keindex<-data.frame(subj=sub,Vm=Vm,Km=Km, Vd=Vd)
           show(keindex)
               cat("\nSave data (y/n) ?\n")
             ans<-readline()
@@ -225,7 +225,7 @@ fzero.nolag <- function(InVVRefindex,
     }   
        else {
           cat("<< Summary >>\n")
-          keindex<-data.frame(subject=sub,Tabs=Tabs, kel=ke,Vd=Vd)
+          keindex<-data.frame(subj=sub,Tabs=Tabs, kel=ke,Vd=Vd)
           show(keindex)   
             cat("\nSave data (y/n) ?\n")
             ans<-readline()
