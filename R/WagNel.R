@@ -292,10 +292,7 @@ cat("\n")
     
 par(mfrow=c(2,2))
  for(i in 1:length(A.split)){ 
-    #   if (separateWindows) {
-    #   get(getOption("device"))()
-    #      }       
-    #    par(mfrow=c(2,2))  
+   
       for( j in seq_along(F.split)){ 
          main<-paste(c("In vivo Absorption pH=", A.split[[i]][[i]]$pH[1],"formula.=",as.character(F.split[[j]][["formula."]][1]) ),collapse=" ")
          # plot points

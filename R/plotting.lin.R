@@ -59,9 +59,7 @@ plotting.lin <- function (InVVRefindex, fm, i, pick, coef, xaxis, yaxis,
   cat("\n\n")
     
  #Divide plot console into four parts
-  if (separateWindows) {
-    get(getOption("device"))()
-  }
+  windows(record = TRUE ) 
   par(mfrow=c(2,2))
   main<-paste(c("subject", i ,"plot"),collapse=" ")
      

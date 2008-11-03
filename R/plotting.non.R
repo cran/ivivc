@@ -45,10 +45,9 @@ plotting.non <- function (InVVRefindex, fm, i, pick, xaxis, yaxis,
   aicllsbc(fm)
   cat("\n\n")
     
-  ## Divide plot console into four parts
-  if (separateWindows) {
-    get(getOption("device"))()
-  }
+  
+    windows(record = TRUE )()
+  
   par(mfrow=c(2,2))
   main<-paste(c("subject", i ,"plot"),collapse=" ")
      

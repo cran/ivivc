@@ -83,7 +83,7 @@ auc<-AUC[length(y)]+auc.infinity
 aumc.infinity<-(x[length(x)]*y[length(y)])/coef[1,1]+x[length(x)]/((coef[1,1])^2)
 aumc<-AUMC[length(y)]+aumc.infinity
 
-get(getOption("device"))()
+windows(record = TRUE )
 
 par(mfrow=c(2,2))
 
@@ -215,8 +215,8 @@ cat("<<Summary: IVIVC model>>\n")
 cat("\nY=", coef(lm(Y~X))[1],"+",coef(lm(Y~X))[2],"X\n\n")
 
 #plot in vitro-in vivo correlation plot
-windows(record = TRUE)
 
+windows(record = TRUE )
 iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
 z <- lm(FAB~FRD, data=iviv)
 plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Fraction of Released (%)",ylab="Fraction of Absorption (%)",
