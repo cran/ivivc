@@ -64,7 +64,7 @@ if (pick == 1){
         show(InVVTestindex)
         cat("\n\n")
         cat("****************************************************************************\n")
-        cat("*                        Now, Go to Step4 and Step5                        *\n")
+        cat("*                        Now, go to Step 4 and Step 5                        *\n")
         cat("****************************************************************************\n\n")
         return(SelModel(InVVTestindex,keindex))
           }
@@ -81,7 +81,7 @@ else {
         show(InVVTestindex)
         cat("\n\n")
         cat("****************************************************************************\n")
-        cat("*                        Now, Go to Step4 and Step5                        *\n")
+        cat("*                        Now, go to Step 4 and Step 5                        *\n")
         cat("****************************************************************************\n\n")
         return(SelModel(InVVTestindex,keindex))
           }
@@ -99,7 +99,7 @@ else {
         show(InVVTestindex)
         cat("\n\n")
         cat("****************************************************************************\n")
-        cat("*                        Now, Go to Step4 and Step5                        *\n")
+        cat("*                        Now, go to Step 4 and Step 5                        *\n")
         cat("****************************************************************************\n\n")
         return(SelModel(InVVTestindex,keindex))
           }
@@ -117,7 +117,7 @@ else {
         show(InVVTestindex)
         cat("\n\n")
         cat("****************************************************************************\n")
-        cat("*                        Now, Go to Step4 and Step5                        *\n")
+        cat("*                        Now, go to Step 4 and Step 5                        *\n")
         cat("****************************************************************************\n\n")
         return(SelModel(InVVTestindex,keindex))
           }
@@ -135,7 +135,7 @@ else {
         show(InVVTestindex)
         cat("\n\n")
         cat("****************************************************************************\n")
-        cat("*                        Now, Go to Step4 and Step5                        *\n")
+        cat("*                        Now, go to Step 4 and Step 5                        *\n")
         cat("****************************************************************************\n\n")
         return(SelModel(InVVTestindex,keindex))
           }
@@ -153,7 +153,7 @@ else {
         show(InVVTestindex)
         cat("\n\n")
         cat("****************************************************************************\n")
-        cat("*                        Now, Go to Step4 and Step5                        *\n")
+        cat("*                        Now, go to Step 4 and Step 5                        *\n")
         cat("****************************************************************************\n\n")
         return(SelModel(InVVTestindex,keindex))
           }
@@ -171,7 +171,7 @@ else {
         show(InVVTestindex)
         cat("\n\n")
         cat("****************************************************************************\n")
-        cat("*                        Now, Go to Step4 and Step5                        *\n")
+        cat("*                        Now, go to Step 4 and Step 5                        *\n")
         cat("****************************************************************************\n\n")
         return(SelModel(InVVTestindex,keindex))
           }

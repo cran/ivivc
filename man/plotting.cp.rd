@@ -1,3 +1,5 @@
+\encoding{UTF-8}
+
 \name{plotting.cp}
 
 \alias{plotting.cp}

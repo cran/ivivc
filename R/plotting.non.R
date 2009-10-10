@@ -13,7 +13,7 @@ plotting.non <- function (InVVRefindex, fm, i, pick, xaxis, yaxis,
   cal<-predict(fm,list(time=x))
 
   if (!(pick %in% 1:3)) {
-    stop("Pick is illegal")
+    stop("Selection is invlaid.")
   }
   wei <- switch(pick,
                 ifelse(y[j]==0.0, 0, y[j]-cal[j]),
@@ -38,7 +38,7 @@ plotting.non <- function (InVVRefindex, fm, i, pick, xaxis, yaxis,
               
   cat("<< Output >>\n\n")      
   output <- data.frame(x,y,cal,wei,AUC,AUMC)
-  colnames(output) <- list("time","Observed","Calculated","Wtd Residuals","AUC","AUMC")
+  colnames(output) <- list("Sampling time","Observed","Calculated","Weighted Residuals","AUC","AUMC")
   show(output)
   cat("\n") 
         

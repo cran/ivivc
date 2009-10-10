@@ -13,9 +13,9 @@ InVVRefdata<-function(InVVRefindex)
      cat("\n")
 cat("****************************************************************************\n")
 cat("*Input/Edit Basic Data                                                     *\n")
-cat("*   ->subjects no.(subj)                                                   *\n")
-cat("*   ->time                                                                 *\n")   
-cat("*   ->concentration (conc)                                                 *\n")
+cat("*   ->subject no.(subj)                                                   *\n")
+cat("*   ->sampling time                                                        *\n")   
+cat("*   ->drug plasma/serum/blood concentration (conc)                         *\n")
 cat("****************************************************************************\n")
      cat("\n")
      InVVRefindex<-data.frame (subj=c(1), time=(0), conc=c(0)) 
@@ -131,7 +131,7 @@ cat("***************************************************************************
                 }
   else {
   if (pick == 5){
-      cat("\nBye~~ \n\n")
+      cat("\nThanks for using ivivc for R.  Bye now. \n\n")
                 }  
      } 
     }

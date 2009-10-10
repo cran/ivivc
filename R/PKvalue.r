@@ -4,7 +4,7 @@ PKvalue<-function()
 
   cat("\n")
   file.menu <- c("PK parameters from curve fitting (PKfit)",
-                 "PK parameters from Literatures",
+                 "PK parameters from literature",
                  "Back to ivivc menu",
                  "Quit")
   cat("\n")
@@ -13,16 +13,20 @@ PKvalue<-function()
      cat("\n")
 
 cat("****************************************************************************\n")
-cat("*1: Input/Edit In Vivo Absorption Data: IV, Oral solution or IR drug       *\n")
-cat("*2: Develop an IVIVC Model: Fitting IV, Oral solution or IR drug           *\n")
-cat("*3: Input/Edit In Vitro Dissoution Data and                                *\n")
-cat("*   In Vivo absorption Data: ER drug with Different Release Rates          *\n")   
-cat("*4: Develop an IVIVC Model: Model Dependent                                *\n")
-cat("*5: Evaluate an IVIVC model: Prediction Error                              *\n")
+cat("* In vitro-in vivo correlation (IVIVC) is defined as the correlation       *\n")
+cat("* between in-vitro drug dissolution and in-vivo drug absorption.           *\n")
+cat("* This package is used to develop and validate an IVIVC model.             *\n")                
+cat("* The following steps will be conducted:                                   *\n")
+cat("* -> 1: Input/Edit In-vivo absorption data: IV, oral solution or IR drug    *\n")
+cat("* -> 2: Develop an IVIVC model: Fitting IV, Oral solution or IR drug        *\n")
+cat("* -> 3: Input/Edit In-vitro dissolution data and in-Vivo absorption         *\n")
+cat("*       Data: ER drug with different release rates                          *\n")   
+cat("* -> 4: Develop an IVIVC model: Model Dependent Method                      *\n")
+cat("* -> 5: Evaluate an IVIVC model: Prediction error                           *\n")
 cat("****************************************************************************\n")
 cat("\n")
 cat("****************************************************************************\n")
-cat("*                           Now, Go to Step1                               *\n")
+cat("*                           Now, go to Step 1                               *\n")
 cat("****************************************************************************\n\n")
      return(InVVRefdata())}
      else {
@@ -35,7 +39,7 @@ cat("***************************************************************************
         run()}
     else {
     if (pick == 4){
-        cat("\nBye~~ \n\n")}
+        cat("\nThanks for using ivivc for R. Bye now. \n\n")}
          }
        }
   }

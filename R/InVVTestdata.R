@@ -137,7 +137,7 @@ cat("***************************************************************************
                 }
   else {
   if (pick == 5){
-      cat("\nBye~~ \n\n")
+      cat("\nThanks for using ivivc for R.  Bye now. \n\n")
                 }  
        
    }

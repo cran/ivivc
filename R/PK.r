@@ -85,7 +85,7 @@ cat("***************************************************************************
         PKvalue()}
     else {
     if (pick == 4){
-        cat("\nBye~~ \n\n")}
+        cat("\nThanks for using ivivc for R.  Bye now. \n\n")}
          }
        }
    }

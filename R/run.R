@@ -30,12 +30,12 @@ options(warn=-1)
     else {
     if (pick == 2){
         cat("\n")
-        ivivc()
+        ivivc_demo()
        }
     
     else {
     if (pick == 3){
-        cat("\nBye~~ \n\n")}
+        cat("\nThanks for using ivivc for R. Bye now. \n\n")}
          }
    } 
 }

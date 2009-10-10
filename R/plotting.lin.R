@@ -13,7 +13,7 @@ plotting.lin <- function (InVVRefindex, fm, i, pick, coef, xaxis, yaxis,
     
  #Weighted residuals   
  if (!(pick %in% 1:3)) {
-    stop("Pick is illegal")
+    stop("Selection is invalid.")
   }
   
  wei <- switch(pick,
@@ -39,7 +39,7 @@ plotting.lin <- function (InVVRefindex, fm, i, pick, coef, xaxis, yaxis,
  #Output   
   cat("<< Output >>\n")  
   output<-data.frame(x,y,cal,wei,AUC,AUMC)
-  colnames(output)<-list("time","Observed","Calculated","Wtd Residuals","AUC","AUMC")
+  colnames(output)<-list("Sampling time","Observed","Calculated","Weigted Residuals","AUC","AUMC")
   show(output)  
   
  #AUC (0 to infinity)              

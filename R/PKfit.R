@@ -17,6 +17,6 @@ PKfit<-function(InVVRefindex)
   }        
    else if (pick == 3){
      cat("\n\n")
-     cat("\nBye~~ \n\n")
+     cat("\nThanks for using ivivc for R.  Bye now. \n\n")
   }        
 }
