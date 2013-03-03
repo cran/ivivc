@@ -8,9 +8,9 @@ options(warn=-1)
     stop("Package rgenoud not found.")
   }   
   
-  if (!require(odesolve)) {
-    ## lsoda is belong to odesolve package
-    stop("Package odesolve not found.")
+  if (!require(deSolve)) {
+    ## lsoda is belong to deSolve package
+    stop("Package deSolve not found.")
   }
  
   if (noquote(unlist(format(.Platform)))[1] == "unix") {

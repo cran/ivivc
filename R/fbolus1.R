@@ -94,7 +94,7 @@ fbolus1 <- function(InVVRefindex,
         if (MMe) {
           gen<-genoud(objfun,nvars=3,max=FALSE,pop.size=30,
                max.generations=20,wait.generations=10,
-               starting.value=c(par[1,2],par[2,2],par[3,2]),
+               starting.values=c(par[1,2],par[2,2],par[3,2]),
                BFGS=FALSE,print.level=0,boundary.enforcement=2,
                Domains=matrix(c(1,1,1,100,100,100),3,2),
                MemoryMatrix=TRUE) 
@@ -102,7 +102,7 @@ fbolus1 <- function(InVVRefindex,
         else {
           gen<-genoud(objfun,nvars=2,max=FALSE,pop.size=30,
                max.generations=20,wait.generations=10,
-               starting.value=c(par[1,2],par[2,2]),
+               starting.values=c(par[1,2],par[2,2]),
                BFGS=FALSE,print.level=0,boundary.enforcement=2,
                Domains=matrix(c(0.01,0.01,100,100),2,2),
                MemoryMatrix=TRUE)  

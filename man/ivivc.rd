@@ -1,8 +1,8 @@
 \encoding{UTF-8}
 
-\name{ivivc_demo}
+\name{ivivc}
 
-\alias{ivivc_demo}
+\alias{ivivc}
 
 \title{ivivc Demo}
 

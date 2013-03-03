@@ -8,7 +8,7 @@ exportPattern(".")
 import(
   stats4,
   rgenoud,
-  odesolve,
+  deSolve,
   reshape,
   sciplot
 )
