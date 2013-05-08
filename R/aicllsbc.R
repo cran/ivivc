@@ -9,11 +9,6 @@ aicllsbc <- function(fm)
   cat("\n<< Log likelihood >>\n\n")
   show(logLik(fm))
     
-  if (!require(stats4)) {
-    ## BIC is belong to stats4 package
-    stop("Package stats4 not found.")
-  }  
-    
   cat("\n<< Schwarz's Bayesian Criterion (SBC) >>\n\n")
   show(BIC(fm))
   cat("\n")     

@@ -2,8 +2,8 @@
 iv.route <- function(InVVRefindex)
 {
   cat("\n")
-  file.menu <- c("IV-Bolus, & Single Dose",  
-                 "Go Back to Upper Level")
+  file.menu <- c("IV bolus & single-dose",  
+                 "Go back to upper level")
   cat("\n")
   pick <- menu(file.menu, title = "<< IV Route >>")
   if (pick ==1){

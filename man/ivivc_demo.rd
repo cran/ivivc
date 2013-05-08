@@ -10,7 +10,7 @@
    1.iv data:
      Dose=200 mg
      Vd=35 L
-     Ke=0.0863 h-1
+     Ke=0.0863 /h
    2.in vitro dissolution (FRD) and in vivo observed plasma conc.(conc.obs)
    Time=c(0,1,2,3,4,5,6,7,8)
    FRD=c(0,18.7,45.3,62.4,77.3,84.9,91.5,92.7,95.8)

@@ -2,11 +2,11 @@
 PKfit<-function(InVVRefindex)
  { 
   cat("\n")
-  file.menu <- c("1-Compartment PK Model", 
-                 "Go Back to PK parameter menu",
+  file.menu <- c("1-compartment PK model", 
+                 "Go back to PK parameter menu",
                  "Quit")
   cat("\n")
-  pick <- menu(file.menu, title = "<<Step2:Fitting IV, Oral solution or IR drug--> Select a PK model  >>")
+  pick <- menu(file.menu, title = "<<Step2: Fitting IV, Oral solution or IR formulation --> Select a PK model >>")
   if (pick== 1){
      cat("\n\n")  
      one.list(InVVRefindex)
@@ -17,6 +17,6 @@ PKfit<-function(InVVRefindex)
   }        
    else if (pick == 3){
      cat("\n\n")
-     cat("\nThanks for using ivivc for R.  Bye now. \n\n")
+     cat("\nThanks for using ivivc for R.  Bye now. \n\n");graphics.off()
   }        
 }

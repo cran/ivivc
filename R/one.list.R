@@ -3,7 +3,7 @@ one.list <- function(InVVRefindex)
 {
   cat("\n")
   file.menu <- c("IV Route", 
-                 "Non IV Route",
+                 "Non IV Route (solutions/IR)",
                  "Go Back One Upper Level")
   cat("\n")
   pick <- menu(file.menu, title = "<< 1-Compartment Model >>")

@@ -2,12 +2,12 @@
 DepModel<-function(InVVTestindex, keindex)
 { 
   cat("\n")
-  file.menu <- c("1-Compartment Model: Wagner-Nelson Method",
-                 "Go Back to Upper Level", 
-                 "Go Back to PK parameter menu",
+  file.menu <- c("1-compartment model: Wagner-Nelson method",
+                 "Go back to Upper Level", 
+                 "Go back to PK parameter menu",
                  "Quit")
   cat("\n")
-  pick <- menu(file.menu, title = "<<Step4-1:Develop an IVIVC Model: Model Dependent Method>>")
+  pick <- menu(file.menu, title = "<<Step4-1: Develop an IVIVC Model: Model Dependent Method>>")
   if (pick == 1){
      cat("\n\n")  
      WagNel(InVVTestindex,keindex)
@@ -24,7 +24,7 @@ DepModel<-function(InVVTestindex, keindex)
                 }
   else {
   if (pick == 4){
-      cat("\nThanks for using ivivc for R.  Bye now. \n\n")
+      cat("\n Thanks for using ivivc for R.  Bye now. \n\n");graphics.off()
                 }  
       }
      }

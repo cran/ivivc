@@ -10,5 +10,7 @@ import(
   rgenoud,
   deSolve,
   reshape,
-  sciplot
+  sciplot,
+  png,
+  grid
 )

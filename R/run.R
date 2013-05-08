@@ -2,16 +2,6 @@
 run<-function()
 {
 options(warn=-1)
-#prevent warning message 
-  if (!require(rgenoud)) {
-    ## genoud is belong to rgenoud package
-    stop("Package rgenoud not found.")
-  }   
-  
-  if (!require(deSolve)) {
-    ## lsoda is belong to deSolve package
-    stop("Package deSolve not found.")
-  }
  
   if (noquote(unlist(format(.Platform)))[1] == "unix") {
         windows <<- function(record) {
@@ -19,7 +9,7 @@ options(warn=-1)
      }   
   cat("\n")
   file.menu <- c("Start a new project",
-                 "Demo (Wagner-Nelson method)", 
+                 "Tutorial (Wagner-Nelson method)", 
                  "Quit")
    cat("\n")
   pick <- menu(file.menu, title = " << IVIVC menu >> ")
@@ -35,7 +25,8 @@ options(warn=-1)
     
     else {
     if (pick == 3){
-        cat("\nThanks for using ivivc for R. Bye now. \n\n")}
+        cat("\n Thanks for using ivivc for R. Bye now. \n\n")
+        graphics.off()}
          }
    } 
 }

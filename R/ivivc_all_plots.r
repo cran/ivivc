@@ -1,34 +1,29 @@
-### Step5:Calculate an IVIVC Model: Model Dependent or Independent Method  --> Model Dependent Method -->Wagner-Nelson method
-### library(reshape)
-### library(sciplot)
+### 
+### to generate all plots in the backgorund and log these plots into ONE .pdf file. -YJ
+###
 
-WagNel<-function(InVVTestindex,
+ivivc_all_plots<-function(InVVTestindex,
                  InVVRefindex, 
-                 keindex,
-                 separateWindows=TRUE){
-options(width=100)
+                 keindex, Dose,
+                 separateWindows=TRUE) {
 
 #calculate AUC(0~t) and AUC(0~INF)
-###Step1
-zz <- file("ivivc_outputs.txt", open="wt")
-sink(zz, split=TRUE)
-description_version()
+cat("\n\n Please wait... Generating all plots for this run now.\n\n")
+par(mfrow=c(1,1),ask=FALSE)
+plots_to_pdf<-"ivivc_all_plots.pdf"
+pdf(plots_to_pdf,paper="a4", bg = "white")
+logo_plot_desc()
+
    #split dataframe into sub-dataframe
    W.data<-data.frame(pH=InVVTestindex$pH,formula.=InVVTestindex$formula.,subj=InVVTestindex$subj, 
                       time=InVVTestindex$time,conc.obs=InVVTestindex$conc.obs, FRD=InVVTestindex$FRD)
    W.data
    W.split<-split(W.data, list(W.data$pH ,W.data$formula., W.data$subj) )
 
-cat("Enter the dose of ER formulations:\n")
-Dose <- scan(nlines=1,quiet=TRUE)
-cat("\n ER Dose =",Dose,"\n\n") 
-cat(" Load PK parameter data file automatically as follows.\n\n")
 keindex<-readRDS("ivivc_pk_values.RData")                ### use 'keindex', not 'kename'; here we will load PK parameters by default. -YJ 
-### edit(keindex)
-show(keindex);cat("\n\n")
 ###
 ### plot "In vitro Dissolution : Fraction of Released(%) vs. time" 
-    plotting.vitro(InVVTestindex)       ### see if we can log these plots...  -YJ
+    plotting.vitro(InVVTestindex)       
 ###
 ##plot "In vivo plasma concentration (Observed): Plasma conc.vs. time"
     plotting.cp(InVVTestindex)
@@ -75,35 +70,23 @@ if(length(unique(W.data$subj))!=length(unique( keindex$subj))){
                 for(i in 2:length(W.split[[j]][["time"]])){
                 Fab[i]<-(Ft[i]/(ke*aucINF))*100   
                   }
-cat("****************************************************************************\n")
-cat("* Next:                                                                    *\n")
-cat("*      calculate AUCobs(0~t), AUCobs(0~inf), Fobs(t), FABobs               *\n")
-cat("*--------------------------------------------------------------------------*\n")
-cat("* AUCobs(0~t): area under the observed plasma concentration time curve     *\n")
-cat("*              (time = 0 to t)                                             *\n")
-cat("* AUCobs(0~inf): area under the observed plasma concentration time curve   *\n")
-cat("*               (time = 0 to infinity)                                     *\n")
-cat("* Fobs(t): observed absorption rate                                        *\n")
-cat("* FABobs: observed cumulative absorption fraction(%)                       *\n")
-cat("* FRD: cumulative released fraction(%)                                     *\n")
-cat("****************************************************************************\n\n")
-
-#Output
-cat("<< Output >>\n")
-output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subj"]],W.split[[j]][["formula."]],W.split[[j]][["time"]],W.split[[j]][["conc.obs"]],auc, Ft, Fab,W.split[[j]][["FRD"]])
-colnames(output)<-list("pH","subj","formula.","time","conc.obs","AUCobs(0~t)", "Fobs(t)", "FABobs","FRD")
-show(output)
+### 
+### Output  - not req. for this routine. -YJ
+###
+### output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subj"]],W.split[[j]][["formula."]],W.split[[j]][["time"]],W.split[[j]][["conc.obs"]],auc, Ft, Fab,W.split[[j]][["FRD"]])
+### colnames(output)<-list("pH","subj","formula.","time","conc.obs","AUCobs(0~t)", "Fobs(t)", "FABobs","FRD")
+### show(output)
 ### write.csv(output,file="calc_ivivc_outputs.csv",append=TRUE,row.names=FALSE)
-cat("\n<<AUCobs(0~inf) is computed with trapezoidal method>>\n\n")
-show (aucINF)
-cat("\n\n")
+### cat("\n<<AUCobs(0~inf) is computed with trapezoidal method>>\n\n")
+### show (aucINF)
+### cat("\n\n")
 AB[[j]]<-c(Fab)
 RD[[j]]<-c(W.split[[j]][["FRD"]])                                        
 time[[j]]<-c(W.split[[j]][["time"]])
 pH[[j]]<-c(W.split[[j]][["pH"]])
 formu[[j]]<-c(as.character(W.split[[j]][["formula."]])) 
  }
-readline(" Press Enter to continue...")               
+
 #use "melt" function of reshape package to melt lists (Fab and FRD, respectively) from 2*3*3 dataframe
 YY<-melt(AB)
 XX<-melt(RD)
@@ -114,26 +97,17 @@ Y<-YY$value
 X<-XX$value
 vivo<-data.frame(pH=AA$value, formula.=BB$value, time=ZZ$value, FAB=YY$value, FRD=XX$value)
 
-cat("****************************************************************************\n")
-cat("* Step4: Develop an IVIVC Model: Model Dependent Method                    *\n")
-cat("****************************************************************************\n")
-cat("\n")
-cat("<<Output:IVIVC model (linear regression)>>\n")
-
 #calculate linear regression
-show(lm(Y~X))
-show(anova(wnlm<-lm( Y~X)))
-print(summary(wnlm<-lm( Y~X)))
+### show(lm(Y~X))
+### show(anova(wnlm<-lm( Y~X)))
+### print(summary(wnlm<-lm( Y~X)))
 Intercept<-coef(lm(Y~X))[1]
 Slope<-coef(lm(Y~X))[2]
-summary(wnlm<-lm( Y~X))$r.sq
+### summary(wnlm<-lm( Y~X))$r.sq
 #plot in vitro-in vivo correlation plot
 
 iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
-I.split<-split(iviv, list(iviv$formula.))
-
-par(mfrow=c(1,1), ask=TRUE)
-windows(record = TRUE )
+I.split<-split(iviv, list(iviv$formula.)) 
 ###  
 ### to generate color auomatically
 ###
@@ -230,64 +204,35 @@ W.split<-split(W.data, list(W.data$pH ,W.data$formula., W.data$subj) )
                 PEC[j]<-PECmax
                 PEA[j]<-PEAUC
 
-cat("\n")
-cat("****************************************************************************\n")
-cat("* Next:                                                                    *\n")
-cat("*      calculate AUCpred(0~t), AUCpred(0~inf), conc.pred, FABpred(%)       *\n")
-cat("*--------------------------------------------------------------------------*\n")
-cat("* AUCpred(0~t): area under the predicted plasma concentration time curve   *\n")
-cat("*              (time = 0 to t)                                             *\n")
-cat("* AUCpred(0~inf): area under the predicted plasma concentration time curve *\n")
-cat("*                (time = 0 to infinity)                                    *\n")
-cat("* conc.pred: predicted plasma concentration                                *\n")
-cat("* FABpred: predicted cumulative absorption fraction(%)                     *\n")
-cat("****************************************************************************\n\n")
 
-#Output
-     cat("<< Predicted Output >>\n")
-     output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subj"]],W.split[[j]][["formula."]],W.split[[j]][["time"]], PFab, PCp, Pauc )
-     colnames(output)<-list("pH","subj","formula.","time","FABpred", "conc.pred", "AUCpred")
-     show(output)
+### Output    - not req. for this routine. -YJ
+
+     ### cat("<< Predicted Output >>\n")
+     ### output<-data.frame(W.split[[j]][["pH"]],W.split[[j]][["subj"]],W.split[[j]][["formula."]],W.split[[j]][["time"]], PFab, PCp, Pauc )
+     ### colnames(output)<-list("pH","subj","formula.","time","FABpred", "conc.pred", "AUCpred")
+     ### show(output)
      ### write.csv(output,file="predicted_ivivc_outputs.csv",append=TRUE,row.names=FALSE)
-     cat("\n<<AUCpred(0~inf) is computed with trapezoidal method>>\n\n")
-     show(PaucINF)
-     cat("\n\n")
+     ### cat("\n<<AUCpred(0~inf) is computed with trapezoidal method>>\n\n")
+     ### show(PaucINF)
+     ### cat("\n\n")
      PredCp[[j]]<-c(PCp)                                        
      time[[j]]<-c(W.split[[j]][["time"]])
      formu[[j]]<-c(as.character(W.split[[j]][["formula."]])) 
    }
-readline(" Press Enter to continue...")
+
 #for plot predicted Cp
 CC<-melt(PredCp)
 DD<-melt(time)
 EE<-melt(formu)
 Predvivo<-data.frame(conc.pred=CC$value, formula.=EE$value, time=DD$value)
-cat("****************************************************************************\n")
-cat("* Step5: Evaluate an IVIVC model: Prediction Error                         *\n")
-cat("*--------------------------------------------------------------------------*\n")
-cat("* PE_Cmax: average absolute prediction error of Cmax (%)                   *\n")
-cat("* PE_AUC: average absolute prediction error of AUC (%)                     *\n")
-cat("****************************************************************************\n")
-cat("\n")
-cat("<<Summary: Validation report>>\n")
+
 Y<-data.frame(pH=pH, formula.=formula., PECmax=PEC*100, PEAUC=PEA*100)
 Y
 XX<-(aggregate(Y, by=list(pH=Y$pH,formula.=Y$formula.), mean)  ) 
 ZZ<-data.frame(pH=XX[1], formulation=XX[2],PE_Cmax=XX[5], PE_AUC=XX[6])
-colnames(ZZ)<-list("pH", "Formulation", "  PE_Cmax", "PE_AUC")
-show(ZZ)
-write.csv(ZZ, file="validation_summary.csv",row.names=FALSE)
-cat("\n")
-cat("****************************************************************************\n")
-cat("*<<Plots >>                                                                *\n")
-cat("* - Fitting Plots                                                          *\n")
-cat("* - In-vitro-in-vivo-correlation Model (linear regression)                 *\n")
-cat("* - Fraction of in vitro Released(%) vs. time                              *\n")
-cat("* - Observed plasma concentration vs. time                                 *\n")
-cat("* - Fraction of Absorption(%) vs. time                                     *\n")
-cat("* - Predicted plasma concentration vs. time                                *\n")
-cat("****************************************************************************\n")
-cat("\n")
+### colnames(ZZ)<-list("pH", "Formulation", "  PE_Cmax", "PE_AUC")
+### show(ZZ)
+### write.csv(ZZ, file="validation_summary.csv",row.names=FALSE)
 
 ##plot "In vivo Absorption : Fraction of Absorption(%) vs. time"  
       y<-aggregate(vivo, by=list(pH=vivo$pH,formula.=vivo$formula.,time=vivo$time ), mean)
@@ -303,17 +248,17 @@ cat("\n")
  P.split<-split(Predvivo, list(Predvivo$formula.)) 
 
 ### color the plots
-x<-NULL
-for(i in 1:length(P.split)){
-   x[i]<-i
+   x<-NULL
+   for(i in 1:length(P.split)){
+    x[i]<-i
          }
-    lineplot.CI(Predvivo$time, Predvivo$conc.pred, group = Predvivo$formula., cex = 1, lty=1,  ### set 'lty=1' for better looking. -YJ
-    xlab = "Time", ylab = "Drug plasma conc.",cex.lab = 1, x.leg = 12, col=x,bty="l", 
-    font.lab=2,cex.axis=1,cex.main=1,las=1,x.cont=TRUE,xaxt="n",err.width=0.05,lwd=2
-     )
-    axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
-    axis(1,at=0:100,tcl=-.2, labels=FALSE) 
-    mtext("Predicted Drug Plasma Conc.\n",side=3,cex=2)  ### must be placed after plot()
+            lineplot.CI(Predvivo$time, Predvivo$conc.pred, group = Predvivo$formula., cex = 1,lty=1,   ### set 'lty=1' for better looking. -YJ
+            xlab = "Time", ylab = "Drug plasma conc.",cex.lab = 1, x.leg = 12, col=x,bty="l", 
+            font.lab=2,cex.axis=1,cex.main=1,las=1,x.cont=TRUE,xaxt="n",err.width=0.05,lwd=2
+             )
+            axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+            axis(1,at=0:100,tcl=-.2, labels=FALSE) 
+            mtext("Predicted Drug Plasma Conc.\n",side=3,cex=2)  ### must be placed after plot()
 
  for(i in 1:length(A.split)){
     lineplot.CI(yy$time, yy$FAB, group = yy$formula., cex = 1, lty=1,    ### set 'lty=1' for better looking. -YJ
@@ -337,19 +282,6 @@ for(i in 1:length(P.split)){
       ###   temp <- legend(15,20, legend = c(unique(as.character(Predvivo$formula.))),
       ###                  col=c(1:10),pch=c(15:24),text.width = strwidth("1000"),lty=1,lwd=2,    ### inappropriate legend position may cause legend not showing. -YJ
       ###                  xjust=0,yjust=0,box.col="white")                                       ### max. 10 different formulations are allowed.
-    }  
-cat("\n")
-filepath<-getwd()            
-sink()
-close(zz)
-ivivc_all_plots(InVVTestindex, InVVRefindex, keindex, Dose, separateWindows=TRUE)
-readline(" Press Enter to finish this run...")
-graphics.off()
-       cat("*****************************************************************************\n\n")
-       cat("## Please note: output files: ivivc_outputs.txt and ivivc_plots.pdf            \n")
-       cat("   have been created and placed at ",filepath,                               "\n\n")
-       cat("*****************************************************************************\n\n")    
-run()
+ }  
+dev.off()
 }   
-    
-

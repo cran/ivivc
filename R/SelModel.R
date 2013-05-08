@@ -2,11 +2,11 @@
 SelModel<-function(InVVTestindex,keindex)
 { 
   cat("\n")
-  file.menu <- c("Model Dependent Method",
-                 "Go Back to PK parameter menu",
+  file.menu <- c("Model dependent method",
+                 "Go back to previous menu",
                  "Quit")
   cat("\n")
-  pick <- menu(file.menu, title = "<<Step4:Develop an IVIVC Model: Model Dependent Method>>")
+  pick <- menu(file.menu, title = "<<Step4: Develop an IVIVC Model: Model Dependent Method>>")
   if (pick == 1){
      cat("\n\n")  
      DepModel(InVVTestindex,keindex)
@@ -18,7 +18,7 @@ SelModel<-function(InVVTestindex,keindex)
                 }
   else {
   if (pick == 3){
-      cat("\nThanks for using ivivc for R.  Bye now. \n\n")
+      cat("\n Thanks for using ivivc for R.  Bye now. \n\n");graphics.off()
                 }  
    }
   }

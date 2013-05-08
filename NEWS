@@ -1,0 +1,29 @@
+ivivc for R
+ A data analysis tool for in vitro-in vivo correlation (IVIVC)
+ 
+Update logs
+---
+
+05/06/2013
+---
+- fixed subj # check for inconsistent subj # between subj with PK
+  parameters and subj in the in-vivo dataset.
+- provide a very brief user's guide (.pdf);
+- put all plots as one .pdf file; add two more libraries: 'png' and
+  'grid';
+- put in-vitro & in-vivo plots all together with 'group=pH';
+
+---
+
+04/17/2013
+---
+- improve script efficiencies with default setting file outputs.
+- add 'Tutorial' function from ivivc_demo() at top menu.
+- generate output files for "Tutorial'.
+- improve PKfit() working with ivivc.
+- add 'demo' folder.
+- try to add more output files.
+---
+  
+ 
+ 
