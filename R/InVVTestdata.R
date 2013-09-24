@@ -53,7 +53,7 @@ return(InVVTestcsv(InVVTestindex,keindex))
   else 
   if (pick == 3){
 cat("******************************************************************\n")
-cat("* Autoload data file from a previosuly save .RData file          *\n")
+cat("* Autoload data file from a previously save .RData file          *\n")
 cat("*   -> pH media of dissolution tests                             *\n")
 cat("*   -> formulations with different release rates(formula.)       *\n")
 cat("*   -> subjects no./formulation (subj)                           *\n")

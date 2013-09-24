@@ -1,5 +1,5 @@
 #plot in vitro
-plotting.vitro<-function (InVVTestindex,separateWindows=TRUE)   ### since this will genearte 1st plot. so set 'pdf_activate=FALSE' -YJ
+plotting.vitro<-function (InVVTestindex,separateWindows=TRUE)   ### since this will generate 1st plot. so set 'pdf_activate=FALSE' -YJ
 {
 y<-aggregate(InVVTestindex, by=list(pH=InVVTestindex$pH,formula.=InVVTestindex$formula.,time=InVVTestindex$time ), mean)
 yy<-data.frame(pH=InVVTestindex$pH,formula.=InVVTestindex$formula.,time=InVVTestindex$time,FRD=InVVTestindex$FRD)

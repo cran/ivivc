@@ -60,19 +60,20 @@ fbolus1 <- function(InVVRefindex,
              sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2/InVVRefindex$conc[gift]),
              sum(((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])/InVVRefindex$conc[gift])^2))
         }
-#The value of parameter obtained from genetic algorithm   
-          gen<-genoud(objfun,nvars=2,max=FALSE,pop.size=30,
-               max.generations=20,wait.generations=10,
-               starting.values=c(par[1,2],par[2,2]),
-               BFGS=FALSE,print.level=0,boundary.enforcement=2,
-               Domains=matrix(c(0.01,0.01,100,100),2,2),
-               MemoryMatrix=TRUE)  
-## No MM elimination
-          namegen<-c("kel","Vd")
-          outgen<-c(gen$par[1],gen$par[2])
-          F<-objfun(gen$par)
+### #The value of parameter obtained from genetic algorithm   
+###           gen<-genoud(objfun,nvars=2,max=FALSE,pop.size=30,
+###                max.generations=20,wait.generations=10,
+###                starting.values=c(par[1,2],par[2,2]),
+###                BFGS=FALSE,print.level=0,boundary.enforcement=2,
+###                Domains=matrix(c(0.01,0.01,100,100),2,2),
+###                MemoryMatrix=TRUE)  
+### ## No MM elimination
+###           namegen<-c("kel","Vd")
+###           outgen<-c(gen$par[1],gen$par[2])
+###           F<-objfun(gen$par)
+
 ##fitted by Nelder-Mead Simplex algorithm      
-          opt<-optim(c(gen$par[1],gen$par[2]),objfun,method="Nelder-Mead")  
+          opt<-optim(c(par[1,2],par[2,2]),objfun,method="Nelder-Mead")  
           nameopt<-c("kel","Vd")
           outopt<-c(opt$par[1],opt$par[2])
           ke[i]<- opt$par[1]

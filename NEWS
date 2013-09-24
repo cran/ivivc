@@ -4,25 +4,28 @@ ivivc for R
 Update logs
 ---
 
-05/06/2013
+~ 09/24/2013 (v0.1.8)
 ---
-- fixed subj # check for inconsistent subj # between subj with PK
-  parameters and subj in the in-vivo dataset.
-- provide a very brief user's guide (.pdf);
-- put all plots as one .pdf file; add two more libraries: 'png' and
-  'grid';
-- put in-vitro & in-vivo plots all together with 'group=pH';
+   - abandoned rgenoud from nonlinear fit;
+   - moved sciplot, png, grid, rgenoud to Imports from Depends;
+   - fixed some typos with spelling check;
+   - fixed subj # check for inconsistent subj # between subj with PK
+     parameters and subj in the in-vivo dataset;
+   - provide a very brief user's guide (.pdf);
+   - put all plots as one .pdf file; add two more libraries: 'png' and
+     'grid';
+   - put in-vitro & in-vivo plots all together with 'group=pH'; and
+   - replace windows() to dev.new() for linux/unix-like OS.
+---
 
+~ 04/17/2013
 ---
-
-04/17/2013
----
-- improve script efficiencies with default setting file outputs.
-- add 'Tutorial' function from ivivc_demo() at top menu.
-- generate output files for "Tutorial'.
-- improve PKfit() working with ivivc.
-- add 'demo' folder.
-- try to add more output files.
+   - improve script efficiencies with default setting file outputs.
+   - add 'Tutorial' function from ivivc_demo() at top menu.
+   - generate output files for "Tutorial'.
+   - improve PKfit() working with ivivc.
+   - add 'demo' folder.
+   - try to add more output files.
 ---
   
  

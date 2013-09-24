@@ -59,7 +59,8 @@ plotting.lin <- function (InVVRefindex, fm, i, pick, coef, xaxis, yaxis,
   cat("\n\n")
     
  #Divide plot console into four parts
-  windows(record = TRUE ) 
+  ### windows(record = TRUE )     ### NOT working for linux/unix; switch to 'dev.new()'
+  dev.new()
   par(mfrow=c(2,2))
   main<-paste(c("subject", i ,"plot"),collapse=" ")
      

@@ -1,25 +1,20 @@
 #IV data for PKfit
 ### library(reshape)
 ### library(sciplot)    ## not req. for these. -YJ
-ivivc_demo<-function()
+ivivc_test_run<-function()
 {
 options(width=100)
-pdf_activate=FALSE  ### set pdf device activate as FALSE at beginning
-plots_to_pdf<-"ivivc_demo_plots.pdf"
 ###Step1
 zz <- file("ivivc_demo_outputs.txt", open="wt")
 sink(zz, split=TRUE)
-description_version()
 cat("****************************************************************************\n")
 cat("* Step 1: Input/Edit in-vivo absorption Data: IV, oral solution or IR drug *\n")
 cat("*       ->Input:one subject with IV data                                   *\n")
 cat("****************************************************************************\n")
 cat("\n\n")
 cat(" IV Dose = 200 mg\n\n")
-readline(" Press Enter to continue...")
 Dose<-200
 cat(" Now load IV data first and calculate the elimination rate constant (kel).\n\n")
-readline(" Press Enter to continue...")
 InVVRefindex<-data.frame(subject=c(1),time=c(0,1,2,3,4,5,6,7,8),
                     concentration=c(5.71,5.24,4.81,4.41,4.05,3.71,3.40,3.12,2.87))
 show(InVVRefindex)
@@ -53,7 +48,7 @@ objfun <- function(par) {
 }
 
 ### gen<-genoud(objfun,nvars=2,max=FALSE,pop.size=30,
-###             max.generations=20,wait.generations=10,
+###             max.generations=200,wait.generations=10,
 ###             starting.values=c(0.13,20),
 ###             BFGS=FALSE,print.level=0,boundary.enforcement=2,
 ###             Domains=matrix(c(0.01,0.01,100,100),2,2),
@@ -61,6 +56,7 @@ objfun <- function(par) {
 ### namegen<-c("kel","Vd")
 ### outgen<-c(gen$par[1],gen$par[2])
 ### opt<-optim(c(gen$par[1],gen$par[2]),objfun,method="Nelder-Mead")
+
 opt<-optim(c(0.13,20),objfun,method="Nelder-Mead")
 nameopt<-c("kel","Vd")
 outopt<-c(opt$par[1],opt$par[2])
@@ -96,51 +92,6 @@ auc<-AUC[length(y)]+auc.infinity
 aumc.infinity<-(x[length(x)]*y[length(y)])/coef[1,1]+x[length(x)]/((coef[1,1])^2)
 aumc<-AUMC[length(y)]+aumc.infinity
 
-### windows(record = TRUE )     ### NOT working for linux/unix; switch to 'dev.new()'
-dev.new()
-
-par(mfrow=c(2,2))
-
-plot(y~x,data=InVVRefindex,type='p',main="subject 1",
-     xlab="Time (hr)", ylab="Plasma conc. (mg/L)",pch=15,col="black",bty="l",
-     font.lab=2,cex.lab=1,cex.axis=1,cex.main=1)
-lines(x,predict(fm,list(time=x)),type="l",lty=1,
-      col="firebrick3",lwd="2")
-mtext("Linear",side=3,cex=0.88)
-
-plot(x,y,log="y",type='p',main="subject 1",
-     xlab="Time (hr)", ylab="Plasma conc. (mg/L)",pch=15,col="black",bty="l",
-     font.lab=2,cex.lab=1,cex.axis=1,cex.main=1)
-lines(x,predict(fm,list(time=x)),type="l",lty=1,
-      col="firebrick3",lwd="2")
-mtext("Semi-log",side=3,cex=0.88)
-
-plot(x,wei,pch=15,col="blue",bty="l",xlab="Time (hr)",
-     ylab="Weighted Residual",main="Residual Plots",cex.lab=1,
-     cex.axis=1,cex.main=1,font.lab=2)
-abline(h=0,lwd=2,col="black",lty=2)
-
-plot(cal,wei,pch=15,col="blue",bty="l",xlab="Calc Plasma conc.(i)",
-     ylab="Weighted Residual",main="Residual Plots",cex.lab=1,
-     cex.axis=1,cex.main=1,font.lab=2)
-abline(h=0,lwd=2,col="black",lty=2)
-###
-### 1st plot from here; is a 2x2 graphs
-###
-if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }
-
 output
 auc
 aumc
@@ -166,7 +117,6 @@ cat("***************************************************************************
 cat("\n\n")
 cat(" Now load oral data and calculate F(t) & FAB(t) (absorption fraction).\n\n")
 cat(" Oral Dose=200 mg\n")
-readline(" Press Enter to continue...")
 Dose <-200  
 InVVTestindex<-data.frame(pH=c(7.4,7.4,7.4,7.4,7.4,7.4,7.4,7.4,7.4), formula.=c(1,1,1,1,1,1,1,1,1),
                           subject=c(1,1,1,1,1,1,1,1,1),  time=c(0,1,2,3,4,5,6,7,8),
@@ -208,7 +158,6 @@ cat("*        FABobs: observed cumulative absorption fraction(%)                
 cat("*           FRD: cumulative released fraction(%)                           *\n")
 cat("****************************************************************************\n")
 cat("\n\n")
-readline(" Press Enter to continue...")
 #Output
 output1<-data.frame(InVVTestindex$pH, InVVTestindex$subject,InVVTestindex$formula., InVVTestindex$time, InVVTestindex$conc.obs,auc, Ft, Fab, InVVTestindex$FRD)
 colnames(output1)<-list("pH","subject","formula.","time","conc.obs","AUCobs(0~t)", "Fobs(t)", "FABobs","FRD")
@@ -238,7 +187,6 @@ cat("***************************************************************************
 cat("* Step 4: Develop an IVIVC Model: Model Dependent Method                   *\n")
 cat("****************************************************************************\n")
 cat("\n\n")
-readline(" Press Enter to continue...")
 cat("<<Output:IVIVC model (linear regression)>>\n")
 show(lm(Y~X))
 show(anova(wnlm<-lm( Y~X)))
@@ -249,35 +197,6 @@ summary(wnlm<-lm( Y~X))$r.sq
 cat("\n\n")
 cat("<<Summary: IVIVC model>>\n") 
 cat("\nY=", coef(lm(Y~X))[1],"+",coef(lm(Y~X))[2],"X\n\n")
-
-#plot in vitro-in vivo correlation plot
-par(mfrow=c(1,1))
-### windows(record = TRUE )   ### remarked this line; otherwise, this plot cannot be logged into .pdf file. --YJ
-iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
-z <- lm(FAB~FRD, data=iviv)
-plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Fraction of Released (%)",ylab="Fraction of Absorption (%)",
-     bty="l", las=1, font.lab=2,cex.axis=1,cex.main=1,col="firebrick3",lwd="2")
-mtext("In-vitro-in-vivo-correlation Model",side=3,cex=2)  #mtext:可將文字加在圖的四周,cex為字的大小
-#text:在圖形上展現R-squared and formula
-text(15,80,paste("R-squared=",formatC(summary(wnlm<-lm( Y~X))$r.sq)) ) #catch R-squared value
-text(10,75,paste("Y=",formatC(coef(lm( iviv$FAB~iviv$FRD))[1])) )
-text(25,75,paste("+",formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X") )
-abline(z)  # equivalent to abline(reg = z) or
-abline(coef = coef(z))
-
-if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }
 
 ##predict Fraction of absorption, plasma conc.
 PFab<-0
@@ -320,7 +239,6 @@ cat("*      conc.pred: predicted plasma concentration                           
 cat("*        FABpred: predicted cumulative absorption fraction(%)              *\n")
 cat("****************************************************************************\n")
 cat("\n\n")
-readline(" Press Enter to continue...")                
 ### Output
  output2<-data.frame(InVVTestindex$pH ,InVVTestindex$subject,InVVTestindex$formula.,InVVTestindex$time, PFab, PCp, Pauc)
  colnames(output2)<-list("pH","subject","formula.","time","FABpred", "conc.pred", "AUCpred(0~t)")
@@ -345,122 +263,12 @@ cat("* PE_Cmax: average absolute prediction error of Cmax (%)                   
 cat("*  P_EAUC: average absolute prediction error of AUC (%)                    *\n")
 cat("****************************************************************************\n")
 cat("\n\n")
-readline(" Press Enter to continue...")
 cat("<<Summary: Validation report>>\n")
 Y<-data.frame(pH=7.4, formulation=1, PECmax=PECmax*100, PEAUC=PEAUC*100)
 XX<-(aggregate(Y, by=list(pH=Y$pH,formula.=Y$formulation), mean)) 
 ZZ<-data.frame(pH=XX[1], formula.=XX[2],PE_Cmax=XX[5], PE_AUC=XX[6])
 colnames(ZZ)<-list("pH", "Formulation", "  PE_Cmax", "PE_AUC")
 show(ZZ)  
-cat("\n")
-cat("****************************************************************************\n")
-cat("*<<Plots >>                                                                *\n")
-cat("* Fitting Plots                                                            *\n")
-cat("* In-vitro-in-vivo-correlation Model (linear regression)                   *\n")
-cat("* Fraction of in vitro Released(%) vs. time                                *\n")
-cat("* Observed plasma concentration vs. time                                   *\n")
-cat("* Fraction of Absorption(%) vs. time                                       *\n")
-cat("* Predicted plasma concentration vs. time                                  *\n")
-cat("****************************************************************************\n")
-cat("\n\n")
-readline(" Press Enter to end of tutorial...")
-#plot in vitro
-
-main<-paste(c("In Vitro Dissolution pH=7.4","formulation=1"),collapse=" ")
-  # plot points
-  plot(InVVTestindex$time,InVVTestindex$FRD,type="punkte",main=main,
-  xlab="Time (hr)", ylab="Fraction of Released (%)",pch=15,bty="l",las=1,
-  font.lab=2,cex.lab=1,cex.axis=1,cex.main=1)
-   #plot line
-    lines(InVVTestindex$time, InVVTestindex$FRD,col="firebrick3",lwd="2") 
-
-if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }
-
-#plot in vivo
-
-main<-paste(c("In vivo Absorption pH=7.4","formulation=1"),collapse=" ")
-# plot points
-plot(InVVTestindex$time,Fab,type="punkte",main=main,
-xlab="Time (hr)", ylab="Fraction of Absorption (%)",pch=15,bty="l",las=1,
-font.lab=2,cex.lab=1,cex.axis=1,cex.main=1)
-#plot line
-lines(InVVTestindex$time, Fab, col="firebrick3",lwd="2",)
-          
-if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }
-#plot plasma conc (predicted)
-lineplot.CI(Predvivo$time, Predvivo$conc.pred, group = Predvivo$formula., cex = 1,
-            xlab = "Time (hr)", ylab = "Plasma conc. (mg/L)",cex.lab = 1, x.leg = 12,bty="l", 
-            font.lab=2,cex.axis=1,cex.main=1,las=1, pch=15, col="firebrick3",lwd="2"
-             )
-           axis(1,at=0:50,tcl=-.5, labels=FALSE) 
-           mtext("Predicted plasma concentration ",side=3,cex=2)  #要放在plot之後
-
-if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }
-
-#plot plasma conc (observed)     
-lineplot.CI(InVVTestindex$time, InVVTestindex$conc.obs, group = InVVTestindex$formula., cex = 1, 
-            xlab = "Time (hr)", ylab = "Plasma conc. (mg/L)",cex.lab = 1, x.leg = 12, bty="l", 
-            font.lab=2,cex.axis=1,cex.main=1,las=1, pch=15, col="firebrick3",lwd="2"
-             )
-            axis(1,at=0:50,tcl=-.5, labels=FALSE) 
-            mtext("Observed plasma concentration ",side=3,cex=2)  #要放在plot之後
-if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }            
-filepath<-getwd()            
 sink()
 close(zz)
-dev.off()
-graphics.off()
-       cat("*****************************************************************************\n\n")
-       cat("## Please note: output files: ivivc_demo_outputs.txt and ivivc_demo_plots.pdf\n")
-       cat("   have been created and placed at ",filepath,                               "\n\n")
-       cat("*****************************************************************************\n\n")    
-run()
 }

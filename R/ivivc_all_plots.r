@@ -1,5 +1,5 @@
 ### 
-### to generate all plots in the backgorund and log these plots into ONE .pdf file. -YJ
+### to generate all plots in the background and log these plots into ONE .pdf file. -YJ
 ###
 
 ivivc_all_plots<-function(InVVTestindex,
@@ -46,7 +46,7 @@ if(length(unique(W.data$subj))!=length(unique( keindex$subj))){
 ###
       #calculate AUC, F(t) and Fab
       for (j in 1:length(W.split)){
-           #if subject of W.split==subject of kepar, then use ke of kepar to claculate AUC(0~INF)
+           #if subject of W.split==subject of kepar, then use ke of kepar to calculate AUC(0~INF)
            for(x in 1: length(unique( keindex$subj))){
               if (W.split[[j]][["subj"]][1]==keindex$subj[[x]]){
                   ke<- keindex$ke[[x]]
@@ -109,7 +109,7 @@ Slope<-coef(lm(Y~X))[2]
 iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
 I.split<-split(iviv, list(iviv$formula.)) 
 ###  
-### to generate color auomatically
+### to generate color automatically
 ###
    x<-NULL
    for(i in 1:length(I.split)){

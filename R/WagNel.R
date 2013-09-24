@@ -51,7 +51,7 @@ if(length(unique(W.data$subj))!=length(unique( keindex$subj))){
 ###
       #calculate AUC, F(t) and Fab
       for (j in 1:length(W.split)){
-           #if subject of W.split==subject of kepar, then use ke of kepar to claculate AUC(0~INF)
+           #if subject of W.split==subject of kepar, then use ke of kepar to calculate AUC(0~INF)
            for(x in 1: length(unique( keindex$subj))){
               if (W.split[[j]][["subj"]][1]==keindex$subj[[x]]){
                   ke<- keindex$ke[[x]]
@@ -133,9 +133,10 @@ iviv<-data.frame(FAB=Y,FRD=X, formula.=BB$value)
 I.split<-split(iviv, list(iviv$formula.))
 
 par(mfrow=c(1,1), ask=TRUE)
-windows(record = TRUE )
+### windows(record = TRUE )     ### NOT working for linux/unix; switch to 'dev.new()'
+dev.new()
 ###  
-### to generate color auomatically
+### to generate color automatically
 ###
    x<-NULL
    for(i in 1:length(I.split)){

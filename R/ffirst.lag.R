@@ -61,7 +61,7 @@ ffirst.lag<- function(InVVRefindex,
     
       modfun <- function(time,ka,kel,Vd) { 
       out <- lsoda(c(Dose, 0),c(0,time),defun,parms=c(ka=ka,kel=kel,Vd=Vd),
-                   rtol=1e-5,atol=1e-7) 
+                   rtol=1e-6,atol=1e-6) 
       out[-1,3] 
       }
      }  
@@ -91,22 +91,23 @@ ffirst.lag<- function(InVVRefindex,
             sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2/InVVRefindex$conc[gift]),
             sum(((InVVRefindex$conc[InVVRefindex$subj==i][gift] - out[gift])/InVVRefindex$conc[gift])^2))
       }
-#The value of parameter obtained from genetic algorithm 
-           gen<-genoud(objfun,nvars=3,max=FALSE,pop.size=20,max.generations=15,
-               wait.generations=10,starting.values=c(par[1,2],par[2,2],par[3,2]),
-               BFGS=FALSE,print.level=0,boundary.enforcement=2,
-               Domains=matrix(c(0.01,0.01,1,10,1,100),3,2),
-               MemoryMatrix=TRUE)
+#### The value of parameter obtained from genetic algorithm 
+###            gen<-genoud(objfun,nvars=3,max=FALSE,pop.size=20,max.generations=15,
+###                wait.generations=10,starting.values=c(par[1,2],par[2,2],par[3,2]),
+###                BFGS=FALSE,print.level=0,boundary.enforcement=2,
+###                Domains=matrix(c(0.01,0.01,1,10,1,100),3,2),
+###                MemoryMatrix=TRUE)
 
      
 ## No MM elimination
-        namegen<-c("ka","kel","Vd")
-        outgen<-c(gen$par[1],gen$par[2],gen$par[3])
+###         namegen<-c("ka","kel","Vd")
+###         outgen<-c(gen$par[1],gen$par[2],gen$par[3])
+### 
+###       
+###       F<-objfun(gen$par) 
 
-      
-      F<-objfun(gen$par) 
 ## fitted by Nelder-Mead Simplex algorithm
-        opt<-optim(c(gen$par[1],gen$par[2],gen$par[3]),objfun, method="Nelder-Mead") 
+        opt<-optim(c(par[1,2],par[2,2],par[3,2]),objfun, method="Nelder-Mead") 
         nameopt<-c("ka","kel","Vd")
         outopt<-c(opt$par[1],opt$par[2],opt$par[3])
         ka[i]<- opt$par[1]

@@ -16,7 +16,7 @@ cat("\n")
 pick <- menu(file.menu, title = " << Separator and Decimal types >> ")
 if (pick == 1){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -36,7 +36,7 @@ if (pick == 1){
  else {
   if (pick == 2){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -55,7 +55,7 @@ if (pick == 1){
  else {
   if (pick == 3){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -74,7 +74,7 @@ if (pick == 1){
 else {
   if (pick == 4){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -93,7 +93,7 @@ else {
 else {
   if (pick == 5){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -113,7 +113,7 @@ else {
 else {
   if (pick == 6){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -132,7 +132,7 @@ else {
 else {
   if (pick == 7){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -151,7 +151,7 @@ else {
 else {
   if (pick == 8){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
@@ -170,7 +170,7 @@ else {
 else {
   if (pick == 9){
   cat("\n\n")
-        ### cat("\nEnter Data file name(without file extention of .csv)\n")
+        ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### InVVRef.file <-readline()
         ### InVVRef.file<-paste(InVVRef.file,".csv",sep="")
         cnames<-c("subj", "time","conc")
