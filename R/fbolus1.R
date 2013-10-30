@@ -18,9 +18,10 @@ fbolus1 <- function(InVVRefindex,
    
    ## No MM elimination
       if (is.null(kel) || is.null(Vd)) {
-        par<-data.frame(Parameter=c("kel","Vd"),Initial=c(0))
+        par<-data.frame(Parameter=c("kel","Vd"),Initial=c(0.1,10))
         par<-edit(par)
-        par<-check(par)
+        show(par)
+        ### par<-check(par)   ### check() causes error here . YJ (10/25/2013)
 
       }
 

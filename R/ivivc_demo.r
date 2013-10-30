@@ -5,9 +5,9 @@ ivivc_demo<-function()
 {
 options(width=100)
 pdf_activate=FALSE  ### set pdf device activate as FALSE at beginning
-plots_to_pdf<-"ivivc_demo_plots.pdf"
+plots_to_pdf<-"ivivc_plots_demo.pdf"
 ###Step1
-zz <- file("ivivc_demo_outputs.txt", open="wt")
+zz <- file("ivivc_outputs_demo.txt", open="wt")
 sink(zz, split=TRUE)
 description_version()
 cat("****************************************************************************\n")
@@ -23,8 +23,8 @@ readline(" Press Enter to continue...")
 InVVRefindex<-data.frame(subject=c(1),time=c(0,1,2,3,4,5,6,7,8),
                     concentration=c(5.71,5.24,4.81,4.41,4.05,3.71,3.40,3.12,2.87))
 show(InVVRefindex)
-saveRDS(InVVRefindex,"ivivc_ref_data.RData")                                        ### for testing purposes -YJ
-write.csv(InVVRefindex,file="ivivc_demo_ref_data.csv",row.names=FALSE)
+saveRDS(InVVRefindex,"ivivc_ref_data_demo.RData")                                        ### for testing purposes -YJ
+write.csv(InVVRefindex,file="ivivc_ref_data_demo.csv",row.names=FALSE)
 cat("\f")    ### formfeed here = insert a page break!   Haha, great. --YJ  
 ###Step2
 cat("****************************************************************************\n")
@@ -151,7 +151,7 @@ cat("\n\n")
 cat("<<Summary: Fitting result>>\n") 
 keindex<-data.frame(subj=1,kel=opt$par[1],Vd=opt$par[2])   ### in real data, here can have multiple subj.; I set 'subj=1' to save it as valid data. -YJ
 show(keindex)
-kename<-"ivivc_pk_values.RData"                            ### however this will overwrite previously saved data. -YJ
+kename<-"ivivc_pk_values_demo.RData"                            ### however this will overwrite previously saved data. -YJ
 saveRDS(keindex,kename)
 cat("\f")
 ###Step3
@@ -173,8 +173,8 @@ InVVTestindex<-data.frame(pH=c(7.4,7.4,7.4,7.4,7.4,7.4,7.4,7.4,7.4), formula.=c(
                           conc.obs=c(0,0.891,1.997,2.616,3.411,3.33,3.868,3.371,3.433),
                           FRD=c(0, 18.7, 45.3, 62.4, 77.3, 84.9, 91.5, 92.7, 95.8))
 show(InVVTestindex)    
-saveRDS(InVVTestindex,"ivivc_test_data.RData")      ### for testing purpose.  great idea. Haha... -YJ
-write.csv(InVVTestindex,"ivivc_demo_test_data.csv",row.names=FALSE)
+saveRDS(InVVTestindex,"ivivc_test_data_demo.RData")      ### for testing purpose.  great idea. Haha... -YJ
+write.csv(InVVTestindex,"ivivc_test_data_demo.csv",row.names=FALSE)
 cat("\n\n")
 Ft<-0
 auc<-0 

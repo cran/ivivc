@@ -3,6 +3,13 @@ ivivc for R
  
 Update logs
 ---
+~ 10/25/2013 (v0.1.9)
+   - fixed fitting algorithm with removing check();
+   - fixed extdata with "dose once" for each MR dosage forms;
+   - updated dataset in /extdata;
+   - fixed output file names for test (demo) runs;
+   - fixed DESCRIPTION - Description.
+
 
 ~ 09/24/2013 (v0.1.8)
 ---

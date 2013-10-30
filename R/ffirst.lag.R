@@ -24,9 +24,10 @@ ffirst.lag<- function(InVVRefindex,
    } 
      
    if (is.null(ka) || is.null(kel) || is.null(Vd) ) {
-        par<-data.frame(Parameter=c("ka","kel","Vd"),Initial=c(0))
+        par<-data.frame(Parameter=c("ka","kel","Vd"),Initial=c(0.2,0.1,10))
         par<-edit(par)
-        par<-check(par)
+        show(par)
+        ### par<-check(par)      ### check() causes error!  --YJ (10/25/2013)
          }
  
    cat("\n")

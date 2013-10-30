@@ -7,7 +7,7 @@ packageStartupMessage("
 .....................................................................
 
   ivivc for R 
-  v0.1.8                                              
+  v0.1.9                                              
                                                                      
   In vitro-in vivo correlation (IVIVC) is defined as the correlation 
   between in-vitro drug dissolution and in-vivo drug absorption.     
