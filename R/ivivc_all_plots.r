@@ -116,13 +116,16 @@ I.split<-split(iviv, list(iviv$formula.))
     x[i]<-i
          }
 z <- lm(FAB~FRD, data=iviv)
-plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Released Fraction (%)",ylab="Absorption Fraction (%)",
+plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Fraction Dissolved (Fabs, %)",ylab="Fraction Absorbed (Fdis, %)",
      col=x, bty="l", las=1, font.lab=2,cex.axis=1,cex.main=1,lwd=2)
-mtext("In-vitro in-vivo Correlation Model\n",side=3,cex=2)  #mtext:可將文字加在圖的四周,cex為字的大小   
+mtext("Plots of Fabs (%) vs. Fdis(%) (Levy plot)\n",side=3,cex=2)       #mtext:可將文字加在圖的四周,cex為字的大小   
 
-text(15,80,paste("R-squared=",formatC(summary(wnlm<-lm( Y~X))$r.sq)) ) #catch R-squared value 
-text(10,75,paste("Y=",formatC(coef(lm( iviv$FAB~iviv$FRD))[1])) )
-text(25,75,paste("+",formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X") )
+R.sq<-formatC(summary(wnlm<-lm(Y~X))$r.sq,format="f",digits=4)          # based on NCAreglplot() in bear -YJ
+text(15,80,paste("Y=",formatC(coef(lm( iviv$FAB~iviv$FRD))[1]),"+",
+     formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X"))
+### text(25,80,paste("+",formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X"))
+text(12,75,bquote(paste(R^2," = ",.(R.sq))))
+## text(15,75,paste("R-squared=",formatC(summary(wnlm<-lm(Y~X))$r.sq))) #catch R-squared value; original codes
 abline(z)  # equivalent to abline(reg = z) or 
 ### abline(coef = coef(z))
 LLegend<-paste("",InVVTestindex$formula.,sep="")

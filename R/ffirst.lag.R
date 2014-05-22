@@ -8,7 +8,9 @@ ffirst.lag<- function(InVVRefindex,
                       Tlag=TRUE,
                       MMe=FALSE) 
 {
-   #options(warn=-1)  此功能是將 
+   #options(warn=-1)  此功能是將
+   modfun<-NULL
+   
    ## Input dose and Tlag and initial value for ka, kel and Vd
    if (is.null(Dose)) {
      cat("Enter Dose value\n")
@@ -17,7 +19,7 @@ ffirst.lag<- function(InVVRefindex,
    else {
      cat("Dose = ",Dose,"\n")
    }
-   if ( Tlag ){
+   if (Tlag){
        cat("\nEnter lag time value\n")
        Tlag<-scan(nlines=1,quiet=TRUE)
        cat("\n")
@@ -46,9 +48,8 @@ ffirst.lag<- function(InVVRefindex,
       list(c(dy1dt,dy2dt)) 
       } 
     
-      modfun <- function(time,ka,kel,Vd) { 
-      out <- lsoda(c(Dose,0),c(0,time),defun,parms=c(ka=ka,kel=kel,Vd=Vd),
-                   rtol=1e-5,atol=1e-8) 
+      modfun <<- function(time,ka,kel,Vd) { 
+      out <- lsoda(c(Dose,0),c(0,time),defun,parms=c(ka=ka,kel=kel,Vd=Vd),rtol=1e-08,atol=1e-08)
       out[-1,3] 
       }
      }
@@ -60,9 +61,8 @@ ffirst.lag<- function(InVVRefindex,
       list(c(dy1dt,dy2dt)) 
       } 
     
-      modfun <- function(time,ka,kel,Vd) { 
-      out <- lsoda(c(Dose, 0),c(0,time),defun,parms=c(ka=ka,kel=kel,Vd=Vd),
-                   rtol=1e-6,atol=1e-6) 
+      modfun <<- function(time,ka,kel,Vd) { 
+      out <- lsoda(c(Dose, 0),c(0,time),defun,parms=c(ka=ka,kel=kel,Vd=Vd),rtol=1e-08,atol=1e-08) 
       out[-1,3] 
       }
      }  
@@ -86,51 +86,52 @@ ffirst.lag<- function(InVVRefindex,
       sub[i]<-i  
       objfun <- function(par) {
       out <- modfun(InVVRefindex$time[InVVRefindex$subj==i], par[1], par[2], par[3])
-      gift <- which( InVVRefindex$conc[InVVRefindex$subj==i] != 0 )
+      gift <- which(InVVRefindex$conc[InVVRefindex$subj==i] != 0 )
       switch(pick,
             sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2),
             sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2/InVVRefindex$conc[gift]),
-            sum(((InVVRefindex$conc[InVVRefindex$subj==i][gift] - out[gift])/InVVRefindex$conc[gift])^2))
+            sum(((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])/InVVRefindex$conc[gift])^2))
       }
-#### The value of parameter obtained from genetic algorithm 
-###            gen<-genoud(objfun,nvars=3,max=FALSE,pop.size=20,max.generations=15,
-###                wait.generations=10,starting.values=c(par[1,2],par[2,2],par[3,2]),
-###                BFGS=FALSE,print.level=0,boundary.enforcement=2,
-###                Domains=matrix(c(0.01,0.01,1,10,1,100),3,2),
-###                MemoryMatrix=TRUE)
-
-     
-## No MM elimination
-###         namegen<-c("ka","kel","Vd")
-###         outgen<-c(gen$par[1],gen$par[2],gen$par[3])
-### 
-###       
-###       F<-objfun(gen$par) 
 
 ## fitted by Nelder-Mead Simplex algorithm
         opt<-optim(c(par[1,2],par[2,2],par[3,2]),objfun, method="Nelder-Mead") 
         nameopt<-c("ka","kel","Vd")
         outopt<-c(opt$par[1],opt$par[2],opt$par[3])
+        
         ka[i]<- opt$par[1]
         ke[i]<- opt$par[2]
         Vd[i]<- opt$par[3]
 
+        if(opt$par[1]<0) opt$par[1]<-0.01
+        if(opt$par[2]<0) opt$par[2]<-0.01
+        if(opt$par[3]<0) opt$par[3]<-0.01
+        
+        conc<-InVVRefindex$conc[InVVRefindex$subj==i]
+        time<-InVVRefindex$time[InVVRefindex$subj==i]
+        
+        if(pick==1) weights=(1/conc^0)  ### equal weight
+        if(pick==2) weights=(1/conc^1)  ### 1/Cp
+        if(pick==3) weights=(1/conc^2)  ### 1/Cp^2
+        
       cat("\n<< The value of parameter fitted by Nelder-Mead Simplex algorithm >>\n\n")
       print(data.frame(Parameter=nameopt,Value=outopt))
       
 ##Residuals sum-of-squares and parameter values fitted by nls 
-      cat("\n<< Residual sum-of-squares and parameter values fitted by nls >>\n\n")
+      cat("\n<< Residual sum-of-squares and parameter values fitted by nlsLM >>\n\n")
 ## No MM elimination
-        fm <-nls(conc ~ modfun(time, ka, kel, Vd), data=InVVRefindex,subset=subj==i,
-             start=list(ka=opt$par[1],kel=opt$par[2],Vd=opt$par[3]),trace=TRUE,
-             nls.control(tol=1))
+        fm <-nlsLM(conc ~ modfun(time, ka, ke, Vd), data=subset(InVVRefindex,subj==i),
+             start=list(ka=opt$par[1],ke=opt$par[2],Vd=opt$par[3]),weights=weights,
+             control=nls.lm.control(maxiter=500),lower=c(1e-06,1e-06,1e-06,1e-06))
         cat("\n")
-        coef<-data.frame(coef(fm)["kel"])
+        ka[i]<-data.frame(coef(fm)["ka"])[1,1]  ### extract ka value from fm
+        ke[i]<-data.frame(coef(fm)["ke"])[1,1]  ### extract ke value from fm
+        Vd[i]<-data.frame(coef(fm)["Vd"])[1,1]  ### extract Vd value from fm
+        coef <-data.frame(coef(fm)["ke"])
         plotting.lin(InVVRefindex, fm, i, pick, coef, xaxis, yaxis)
 
  }        
           cat("<< Summary >>\n")
-          keindex<-data.frame(subj=sub,ka=ka, kel=ke,Vd=Vd)
+          keindex<-data.frame(subj=sub,ka=ka,kel=ke,Vd=Vd)
           show(keindex)
           kename<-"ivivc_pk_values.RData"                  ### however this will overwrite previously saved data. -YJ
           saveRDS(keindex,kename)

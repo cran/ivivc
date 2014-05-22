@@ -4,6 +4,9 @@
 ivivc_demo<-function()
 {
 options(width=100)
+### require(reshape)
+modfun<-NULL
+concentration<-NULL
 pdf_activate=FALSE  ### set pdf device activate as FALSE at beginning
 plots_to_pdf<-"ivivc_plots_demo.pdf"
 ###Step1
@@ -40,7 +43,7 @@ defun<- function(time, y, parms) {
       list(dCpdt)
 }
 
-modfun <- function(time,kel, Vd) {
+modfun <<- function(time,kel, Vd) {
       out <- lsoda(Dose/Vd,c(0,time),defun,parms=c(kel=kel,Vd=Vd),
                    rtol=1e-6,atol=1e-6)
       out[-1,2]
@@ -66,9 +69,13 @@ nameopt<-c("kel","Vd")
 outopt<-c(opt$par[1],opt$par[2])
 ke<-opt$par[1]
 Vd<-opt$par[2]
-fm<-nls(concentration ~ modfun(time, kel, Vd), data=InVVRefindex,
-        start=list(kel=opt$par[1],Vd=opt$par[2]),trace=TRUE,
-        nls.control(tol=1))
+
+if(opt$par[1]<0) opt$par[1]<-0.01
+if(opt$par[2]<0) opt$par[2]<-0.01
+
+fm<-nlsLM(concentration ~ modfun(time, kel, Vd), data=InVVRefindex,
+        start=list(kel=opt$par[1],Vd=opt$par[2]),weights=(1/concentration^0),
+        control=nls.lm.control(maxiter=500),lower=c(1e-06,1e-06))
 coef<-data.frame(coef(fm)["kel"])
 x<-InVVRefindex$time
 y<-InVVRefindex$concentration

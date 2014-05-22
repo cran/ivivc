@@ -6,7 +6,7 @@ one.list <- function(InVVRefindex)
                  "Non IV Route (solutions/IR)",
                  "Go Back One Upper Level")
   cat("\n")
-  pick <- menu(file.menu, title = "<< 1-Compartment Model >>")
+  pick <- menu(file.menu, title = "<< 1-Compartment PK Model >>")
   if (pick == 1){
      cat("\n\n")  
      iv.route(InVVRefindex)

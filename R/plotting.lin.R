@@ -39,7 +39,7 @@ plotting.lin <- function (InVVRefindex, fm, i, pick, coef, xaxis, yaxis,
  #Output   
   cat("<< Output >>\n")  
   output<-data.frame(x,y,cal,wei,AUC,AUMC)
-  colnames(output)<-list("Sampling time","Observed","Calculated","Weigted Residuals","AUC","AUMC")
+  colnames(output)<-list("Time","obs. conc","calc. conc.","Weigted Residuals","AUC","AUMC")
   show(output)  
   
  #AUC (0 to infinity)              

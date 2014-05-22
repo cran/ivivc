@@ -7,7 +7,7 @@ WagNel<-function(InVVTestindex,
                  keindex,
                  separateWindows=TRUE){
 options(width=100)
-
+### require(reshape)
 #calculate AUC(0~t) and AUC(0~INF)
 ###Step1
 zz <- file("ivivc_outputs.txt", open="wt")
@@ -19,9 +19,9 @@ description_version()
    W.data
    W.split<-split(W.data, list(W.data$pH ,W.data$formula., W.data$subj) )
 
-cat("Enter the dose of ER formulations:\n")
+cat("Enter the dose of MR formulations:\n")
 Dose <- scan(nlines=1,quiet=TRUE)
-cat("\n ER Dose =",Dose,"\n\n") 
+cat("\n MR Dose =",Dose,"\n\n") 
 cat(" Load PK parameter data file automatically as follows.\n\n")
 keindex<-readRDS("ivivc_pk_values.RData")                ### use 'keindex', not 'kename'; here we will load PK parameters by default. -YJ 
 ### edit(keindex)
@@ -143,13 +143,16 @@ dev.new()
     x[i]<-i
          }
 z <- lm(FAB~FRD, data=iviv)
-plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Released Fraction (%)",ylab="Absorption Fraction (%)",
+plot(vivo$FRD, vivo$FAB, group=vivo$formula., xlab="Fraction Dissolved (Fabs, %)",ylab="Fraction Absorbed (Fdis, %)",
      col=x, bty="l", las=1, font.lab=2,cex.axis=1,cex.main=1,lwd=2)
-mtext("In-vitro in-vivo Correlation Model\n",side=3,cex=2)  #mtext:可將文字加在圖的四周,cex為字的大小   
+mtext("Plots of Fabs (%) vs. Fdis(%) (Levy plot)\n",side=3,cex=2)  #mtext:可將文字加在圖的四周,cex為字的大小   
 
-text(15,80,paste("R-squared=",formatC(summary(wnlm<-lm( Y~X))$r.sq)) ) #catch R-squared value 
-text(10,75,paste("Y=",formatC(coef(lm( iviv$FAB~iviv$FRD))[1])) )
-text(25,75,paste("+",formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X") )
+R.sq<-formatC(summary(wnlm<-lm(Y~X))$r.sq,format="f",digits=4)          # based on NCAreglplot() in bear -YJ
+text(15,80,paste("Y=",formatC(coef(lm( iviv$FAB~iviv$FRD))[1]),"+",
+     formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X"))
+### text(25,80,paste("+",formatC(coef(lm( iviv$FAB~iviv$FRD))[2]),"X"))
+text(12,75,bquote(paste(R^2," = ",.(R.sq))))                        ### works great!  -YJ
+## text(15,75,paste("R-squared=",formatC(summary(wnlm<-lm(Y~X))$r.sq))) #catch R-squared value; original codes
 abline(z)  # equivalent to abline(reg = z) or 
 ### abline(coef = coef(z))
 LLegend<-paste("",InVVTestindex$formula.,sep="")
@@ -282,10 +285,10 @@ cat("\n")
 cat("****************************************************************************\n")
 cat("*<<Plots >>                                                                *\n")
 cat("* - Fitting Plots                                                          *\n")
-cat("* - In-vitro-in-vivo-correlation Model (linear regression)                 *\n")
-cat("* - Fraction of in vitro Released(%) vs. time                              *\n")
+cat("* - Plots of Fabs (%) vs. Fdis(%) (Levy plot) (linear regression)          *\n")
+cat("* - Fraction of in vitro Released(Fdis, %) vs. time                        *\n")
 cat("* - Observed plasma concentration vs. time                                 *\n")
-cat("* - Fraction of Absorption(%) vs. time                                     *\n")
+cat("* - Fraction of Absorption(Fabs, %) vs. time                               *\n")
 cat("* - Predicted plasma concentration vs. time                                *\n")
 cat("****************************************************************************\n")
 cat("\n")
@@ -318,7 +321,7 @@ for(i in 1:length(P.split)){
 
  for(i in 1:length(A.split)){
     lineplot.CI(yy$time, yy$FAB, group = yy$formula., cex = 1, lty=1,    ### set 'lty=1' for better looking. -YJ
-       xlab = "Time", ylab = "Mean Predicted Fraction of Absorption (%)",cex.lab = 1,x.leg = 15,y.leg=20,col=c(1:10),bty="l",  ### max. 10 different formulations are allowed.
+       xlab = "Time", ylab = "Mean Predicted Fraction Absorption (%)",cex.lab = 1,x.leg = 15,y.leg=20,col=c(1:10),bty="l",  ### max. 10 different formulations are allowed.
        font.lab=2,cex.axis=1,cex.main=1,las=1,x.cont=TRUE,xaxt="n",err.width=0.05,lwd=2)
        axis(1,at=c(0,2,4,6,8,10,12,14,16,18,20,24,26,28,30,32,34,36,38,40,48,72,96,120),las=0)
        axis(1,at=0:120,tcl=-.2, labels=FALSE)

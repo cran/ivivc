@@ -2,19 +2,15 @@
 ##Estimate model fitting: AIC, Log likelihood, SBC
 aicllsbc <- function(fm)
 {   
-  cat("\n") 
-  cat("<< Akaike's Information Criterion (AIC) >>\n\n")
-  show(AIC(fm))
-    
-  cat("\n<< Log likelihood >>\n\n")
-  show(logLik(fm))
-    
-  cat("\n<< Schwarz's Bayesian Criterion (SBC) >>\n\n")
-  show(BIC(fm))
-  cat("\n")     
-  
   #Summary the results of nls
-  print(summary(fm))  
-  cat("\n")   
-  cat(date(),"\n\n")     
+  print(summary(fm))
+  ModelSelect<-data.frame(Model_Select=c("AIC","Log Likelihood","SBC/BIS"),
+                             Values=c(AIC(fm),logLik(fm),BIC(fm)))
+  show(ModelSelect);cat("\n")
+  
+  cat("<< Variance-Covariance Matrix >>\n")
+  print(vcov(fm))
+    
+  cat("\n<< weights >>\n")  ### for debugging purpose. -YJ
+  print(weights(fm))
 }  
