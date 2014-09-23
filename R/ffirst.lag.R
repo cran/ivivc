@@ -102,9 +102,9 @@ ffirst.lag<- function(InVVRefindex,
         ke[i]<- opt$par[2]
         Vd[i]<- opt$par[3]
 
-        if(opt$par[1]<0) opt$par[1]<-0.01
-        if(opt$par[2]<0) opt$par[2]<-0.01
-        if(opt$par[3]<0) opt$par[3]<-0.01
+        if(opt$par[1]<0) opt$par[1]<-0.001
+        if(opt$par[2]<0) opt$par[2]<-0.001
+        if(opt$par[3]<0) opt$par[3]<-0.001
         
         conc<-InVVRefindex$conc[InVVRefindex$subj==i]
         time<-InVVRefindex$time[InVVRefindex$subj==i]
@@ -121,7 +121,7 @@ ffirst.lag<- function(InVVRefindex,
 ## No MM elimination
         fm <-nlsLM(conc ~ modfun(time, ka, ke, Vd), data=subset(InVVRefindex,subj==i),
              start=list(ka=opt$par[1],ke=opt$par[2],Vd=opt$par[3]),weights=weights,
-             control=nls.lm.control(maxiter=500),lower=c(1e-06,1e-06,1e-06,1e-06))
+             control=nls.lm.control(maxiter=500),lower=c(1e-06,1e-06,1e-06))
         cat("\n")
         ka[i]<-data.frame(coef(fm)["ka"])[1,1]  ### extract ka value from fm
         ke[i]<-data.frame(coef(fm)["ke"])[1,1]  ### extract ke value from fm
