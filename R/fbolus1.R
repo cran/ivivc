@@ -1,10 +1,8 @@
 #Step2-1-1-1:Fitting with 1-Compartment PK Model:  1-Compartment menu -->iv route menu --> iv bolus route
 fbolus1 <- function(InVVRefindex,
                     Dose=NULL,
-                    Vm=NULL,Km=NULL, ## MMe=TRUE
                     Vd=NULL,
-                    kel=NULL,        ## MMe=FALSE; no MMe for ivivc -- YJ
-                    MMe=FALSE)
+                    kel=NULL)
 {
    #options(warn=-1)
    modfun<-NULL
@@ -44,10 +42,8 @@ fbolus1 <- function(InVVRefindex,
    pick <- menu(file.menu, title = "<< Weighting Schemes >>")
    
    with(entertitle(),{  
-   ke<-NULL
+   kel<-NULL
    Vd<-NULL
-   Vm<-NULL
-   Km<-NULL
    sub<-NULL
    for( i in 1:length(unique(InVVRefindex$subj)))  {
      cat("\n\n               << subject",i,">>\n\n" ) 
@@ -55,7 +51,7 @@ fbolus1 <- function(InVVRefindex,
      objfun <- function(par) {
 ## No MM elimination
         out <- modfun(InVVRefindex$time[InVVRefindex$subj==i], par[1], par[2])
-       gift <- which( InVVRefindex$conc[InVVRefindex$subj==i] != 0 )
+        gift <- which(InVVRefindex$conc[InVVRefindex$subj==i] != 0)
         switch(pick,
              sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2),
              sum((InVVRefindex$conc[InVVRefindex$subj==i][gift]-out[gift])^2/InVVRefindex$conc[gift]),
@@ -63,21 +59,19 @@ fbolus1 <- function(InVVRefindex,
         }
 
 ##fitted by Nelder-Mead Simplex algorithm      
-          opt<-optim(c(par[1,2],par[2,2]),objfun,method="Nelder-Mead")  
+          opt<-optimx(c(par[1,2],par[2,2]),objfun,method="Nelder-Mead")  
           nameopt<-c("kel","Vd")
-          outopt<-c(opt$par[1],opt$par[2])
-          ke[i]<- opt$par[1]
-          Vd[i]<- opt$par[2]
+          outopt<-c(opt$p1,opt$p2)
           
-          if(opt$par[1]<0) opt$par[1]<-0.001
-          if(opt$par[2]<0) opt$par[2]<-0.001
+          if(opt$p1<0) opt$p1<-0.0001
+          if(opt$p2<0) opt$p2<-0.0001
           
           conc<-InVVRefindex$conc[InVVRefindex$subj==i]
           time<-InVVRefindex$time[InVVRefindex$subj==i]
           
-          if(pick==1) weights=(1/conc^0)  ### equal weight
-          if(pick==2) weights=(1/conc^1)  ### 1/Cp
-          if(pick==3) weights=(1/conc^2)  ### 1/Cp^2
+          if(pick==1) weights<- ifelse(conc==0.,1,1/conc^0)  ### equal weight
+          if(pick==2) weights<- ifelse(conc==0.,1,1/conc^1)  ### 1/Cp
+          if(pick==3) weights<- ifelse(conc==0.,1,1/conc^2)  ### 1/Cp^2
 
        cat("\n<< The value of parameter fitted by Nelder-Mead Simplex algorithm >>\n\n")
        print(data.frame(Parameter=nameopt,Value=outopt))
@@ -86,17 +80,17 @@ fbolus1 <- function(InVVRefindex,
        cat("\n<< Residual sum-of-squares and parameter values fitted by nlsLM >>\n\n")
        ## No MM elimination
 
-       fm<-nlsLM(conc ~ modfun(time, ke, Vd), data=subset(InVVRefindex,subj==i),
-                 start=list(ke=opt$par[1],Vd=opt$par[2]),weights=weights,
-                 control=nls.lm.control(maxiter=500),lower=c(1e-06,1e-06))
+       fm<-nlsLM(conc ~ modfun(time, kel, Vd), data=subset(InVVRefindex,subj==i),
+                 start=list(kel=opt$p1,Vd=opt$p2),weights=weights,
+                 control=nls.lm.control(maxiter=500,maxfev=5000),lower=c(1e-06,1e-06))
        cat("\n")
-       ke[i]<-data.frame(coef(fm)["ke"])[1,1]  ### extract ke value from fm
-       Vd[i]<-data.frame(coef(fm)["Vd"])[1,1]  ### extract Vd value from fm
-       coef <-data.frame(coef(fm)["ke"])
+       kel[i]<-data.frame(coef(fm)["kel"])[1,1]  ### extract kel value from fm
+       Vd[i] <-data.frame(coef(fm)["Vd"])[1,1]   ### extract Vd value from fm
+       coef  <-data.frame(coef(fm)["kel"])
        plotting.lin(InVVRefindex, fm, i, pick, coef, xaxis, yaxis)
    }
        cat("<< Summary >>\n")
-       keindex<-data.frame(subj=sub,kel=ke,Vd=Vd)
+       keindex<-data.frame(subj=sub,kel=kel,Vd=Vd)
        show(keindex)
        kename<-"ivivc_pk_values.RData"                  ### however this will overwrite previously saved data. -YJ
        saveRDS(keindex,kename)   

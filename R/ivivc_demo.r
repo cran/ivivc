@@ -64,19 +64,24 @@ objfun <- function(par) {
 ### namegen<-c("kel","Vd")
 ### outgen<-c(gen$par[1],gen$par[2])
 ### opt<-optim(c(gen$par[1],gen$par[2]),objfun,method="Nelder-Mead")
-opt<-optim(c(0.13,20),objfun,method="Nelder-Mead")
+opt<-optimx(c(0.13,20),objfun,method="Nelder-Mead")
 nameopt<-c("kel","Vd")
-outopt<-c(opt$par[1],opt$par[2])
-ke<-opt$par[1]
-Vd<-opt$par[2]
+outopt<-c(opt$p1,opt$p2)
 
-if(opt$par[1]<0) opt$par[1]<-0.01
-if(opt$par[2]<0) opt$par[2]<-0.01
+### kel<-opt$par[1]
+### Vd <-opt$par[2]
+
+if(opt$p1<0) opt$p1<-0.0001
+if(opt$p2<0) opt$p2<-0.0001
 
 fm<-nlsLM(concentration ~ modfun(time, kel, Vd), data=InVVRefindex,
-        start=list(kel=opt$par[1],Vd=opt$par[2]),weights=(1/concentration^0),
+        start=list(kel=opt$p1,Vd=opt$p2),weights=(1/concentration^0),
         control=nls.lm.control(maxiter=500),lower=c(1e-06,1e-06))
+
+kel <-data.frame(coef(fm)["kel"])[1,1]  ### extract kel value from fm
+Vd  <-data.frame(coef(fm)["Vd"])[1,1]   ### extract Vd value from fm
 coef<-data.frame(coef(fm)["kel"])
+
 x<-InVVRefindex$time
 y<-InVVRefindex$concentration
 cal<-predict(fm,list(time=x))
@@ -156,7 +161,7 @@ logLik(fm)
 print(summary(fm))
 cat("\n\n")
 cat("<<Summary: Fitting result>>\n") 
-keindex<-data.frame(subj=1,kel=opt$par[1],Vd=opt$par[2])   ### in real data, here can have multiple subj.; I set 'subj=1' to save it as valid data. -YJ
+keindex<-data.frame(subj=1,kel=opt$p1,Vd=opt$p2)   ### in real data, here can have multiple subj.; I set 'subj=1' to save it as valid data. -YJ
 show(keindex)
 kename<-"ivivc_pk_values_demo.RData"                            ### however this will overwrite previously saved data. -YJ
 saveRDS(keindex,kename)
@@ -190,16 +195,16 @@ for(i in 2:length(InVVTestindex$time)){
  auc[i]<-(InVVTestindex$time[i]-InVVTestindex$time[i-1])*(InVVTestindex$conc.obs[i]+InVVTestindex$conc.obs[i-1])* 0.5
  auc[i]<-auc[i]+auc[i-1]
 #calculate F(t): dose of absorption
- Ft[i]<-InVVTestindex$conc.obs[i]+ke*auc[i]
+ Ft[i]<-InVVTestindex$conc.obs[i]+kel*auc[i]
  }
   
 #calculate AUC (0~INF)   AUC[length(y)]+auc.infinity
-auc.infinity<-InVVTestindex$conc.obs[length(InVVTestindex$conc.obs)]/ke
+auc.infinity<-InVVTestindex$conc.obs[length(InVVTestindex$conc.obs)]/kel
 aucINF<-auc[length(InVVTestindex$conc.obs)]+auc.infinity
   #calculate Fab(t): absorption fraction rate
   Fab<-0
   for(i in 2:length(InVVTestindex$time)){
-  Fab[i]<-(Ft[i]/(ke*aucINF))*100
+  Fab[i]<-(Ft[i]/(kel*aucINF))*100
   }
 
 cat("****************************************************************************\n")
@@ -294,7 +299,7 @@ for(i in 2:length(InVVTestindex$FRD)){
    PCp<-0
    for(i in 2:length (InVVTestindex$time)){
    #calculate predicted concentration
-   PCp[i]<-((PCp[i-1]*(2-((InVVTestindex$time[i]-InVVTestindex$time[i-1])*ke))+(2*(PFab[i]-PFab[i-1])*1/100*Dose/Vd))/(2+(ke*(InVVTestindex$time[i]-InVVTestindex$time[i-1]))))
+   PCp[i]<-((PCp[i-1]*(2-((InVVTestindex$time[i]-InVVTestindex$time[i-1])*kel))+(2*(PFab[i]-PFab[i-1])*1/100*Dose/Vd))/(2+(kel*(InVVTestindex$time[i]-InVVTestindex$time[i-1]))))
    #pick up predicted Cmax and observed Cmax
    PCmax<-max(PCp, na.rm = FALSE)
     Cmax<-max(InVVTestindex$conc.obs, na.rm = FALSE)
@@ -309,7 +314,7 @@ for(i in 2:length(InVVTestindex$FRD)){
         Pauc[i]<-Pauc[i]+Pauc[i-1]
         }
          #calculate Predicted AUC (0~INF)
-         Pauc.infinity<-PCp[length(InVVTestindex$conc.obs)]/ke
+         Pauc.infinity<-PCp[length(InVVTestindex$conc.obs)]/kel
          PaucINF<-Pauc[length(InVVTestindex$conc.obs)]+Pauc.infinity
            #calculate absolute prediction error of AUC
            PEAUC<-(abs(aucINF-PaucINF))/aucINF

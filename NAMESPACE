@@ -12,5 +12,6 @@ import(
   sciplot,
   png,
   grid,
-  minpack.lm
+  minpack.lm,
+  optimx
 )

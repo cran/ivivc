@@ -3,24 +3,32 @@ ivivc for R
  
 Update logs
 ---
+~ 11/21/2014 (v0.2.2)
+   - switched from optim() to optimx();
+   - added R version into output files;
+   - fixed weighting scheme for nlsLM(); and
+   - added CITATION file in the folder of 'inst'.
+   
+---
 ~ 09/23/2014 (v0.2.1)
    - fixed nls.lm(...) in ffirst.lag();
-   - modified DESCRIPTION;
-   - fixed description_version();
+   - modified DESCRIPTION; and
+   - fixed description_version().
+
 ---
 ~ 05/19/2014 (v0.2.0)
    - switched nls() to nlsLM() from package minpack.lm from this
      release; the default method 'LM' (the Levenberg-Marquardt 
      algorithm) is used like PKfit;
    - fixed some notations in the plot, such as R-sq notation in the plots;
-   - updated DESCRIPTION - 'Description' by adding "Level A Correlation";
-   - updated dataset in /extdata;
+   - updated DESCRIPTION - 'Description' by adding "Level A Correlation"; and
+   - updated dataset in /extdata.
    
 ~ 10/25/2013 (v0.1.9)
    - fixed fitting algorithm with removing check();
    - fixed extdata with "dose once" for each MR dosage forms;
    - updated dataset in /extdata;
-   - fixed output file names for test (demo) runs;
+   - fixed output file names for test (demo) runs.
 
 ~ 09/24/2013 (v0.1.8)
 ---
